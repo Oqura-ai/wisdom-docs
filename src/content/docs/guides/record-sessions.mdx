@@ -1,0 +1,127 @@
+---
+title: Record sessions
+description: Two ways to record Claude Code, Codex and Pi, and what happens when things go wrong.
+sidebar:
+  order: 1
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Wisdom records an agent through the agent's own hooks. There are two ways to put them in
+place. Most people only need the first.
+
+|  | **Connect** | **Track** |
+| --- | --- | --- |
+| Start your agent with | `claude`, `codex`, `pi`, as usual | `wisdom track claude` (or `codex`, `pi`) |
+| Login | Your normal one | One per project, kept in `.wisdom/` |
+| Hooks live in | The project's own agent settings, kept out of git | The agent's home inside `.wisdom/` |
+| Records | Agents started in the project's top folder | Every process using that home, from any folder |
+| Best for | Everyday work | Subfolders, Codex in a git worktree, keeping everything in one place |
+
+## Connect: your normal login
+
+```sh
+cd your-project
+wisdom connect
+```
+
+Wisdom adds its hook and reading skill to the project's own settings for each agent:
+
+| Agent | Settings | Skill |
+| --- | --- | --- |
+| Claude Code | `.claude/settings.local.json` | `.claude/skills/` |
+| Codex | `.codex/hooks.json` | `.agents/skills/` |
+| Pi | `.pi/settings.json` | `.agents/skills/` |
+
+These paths go in `.git/info/exclude`, your clone's own ignore file, so nothing reaches git.
+Wisdom only adds its own entries and leaves the rest of each file alone. Running
+`wisdom connect` again repairs them.
+
+Each agent has its own rule for loading project settings:
+
+<Tabs syncKey="agent">
+	<TabItem label="Claude Code">
+	Start `claude` in the project's **top folder**. Started in a subfolder, it doesn't load the
+	project's settings, and that session isn't recorded.
+	</TabItem>
+	<TabItem label="Codex">
+	Trust the project when Codex asks, then approve Wisdom's hooks once in `/hooks`. Codex
+	records from any folder in the project, but **not inside a git worktree**, where it ignores
+	project hooks.
+	</TabItem>
+	<TabItem label="Pi">
+	Start `pi` in the project's **top folder**, and trust the project when it asks.
+	</TabItem>
+</Tabs>
+
+To stop recording, run `wisdom disconnect`. It removes exactly what `connect` added. Your
+recordings are kept.
+
+## Track: a home of its own
+
+```sh
+wisdom init
+```
+
+`init` creates `.wisdom/` and gives each agent a home inside it, with Wisdom's hooks already
+in place. Any process that uses that home is recorded, however it was started: a resume, a
+background `/fork`, a worktree. Then start an agent with `track`. Each one asks you to log in
+once per project.
+
+<Tabs syncKey="agent">
+	<TabItem label="Claude Code">
+
+	```sh
+	wisdom track claude
+	wisdom track claude -- --continue      # options after -- go to claude
+	```
+
+	</TabItem>
+	<TabItem label="Codex">
+
+	Codex runs a hook only after you review it. Do that once:
+
+	```sh
+	wisdom track codex --setup-hooks       # open /hooks, trust Wisdom's hooks, quit
+	wisdom track codex
+	```
+
+	</TabItem>
+	<TabItem label="Pi">
+
+	```sh
+	wisdom track pi                        # run /login once inside Pi
+	```
+
+	</TabItem>
+</Tabs>
+
+Your global `~/.claude`, `~/.codex` and `~/.pi/agent` are never touched. Settings, plugins
+and MCP servers there don't apply inside a tracked home.
+
+<Aside title="Both in one project">
+You can connect and track the same project. A tracked session is recorded once, by its own
+home's hook; the project's copy stands aside.
+</Aside>
+
+## When something goes wrong
+
+| Situation | What Wisdom does |
+| --- | --- |
+| The background service is down | The hook keeps the event in `.wisdom/spool/`, starts the service and shows a warning. Kept events are recorded later, marked `delivered-late`. File changes in that time aren't observed. |
+| You resume a session | The same record continues. The time in between is marked `not-recording-between-visits`. |
+| Hooks never ran (Codex hooks not yet trusted, for example) | Once the agent's own session file has been quiet for two minutes, Wisdom reads it. Prompts show as `in (from session file)`, and the session is marked `not-recorded-live`. |
+| The session goes quiet | After 10 minutes with no event and no running tool, the record closes as `idle`. The next event continues it. |
+| `connect` says an agent is "not connected: git tracks …" | The project commits that agent's settings file, and Wisdom won't write your machine's paths into a file your teammates share. Record that agent with `wisdom track` instead. |
+
+## Leaving files out
+
+To stop Wisdom diffing some files, add a `.wisdomignore` to the project: one relative path or
+folder per line, `#` for comments. There are no globs. `.git`, `node_modules`, `dist`,
+`build` and similar folders are skipped already.
+
+```txt title=".wisdomignore"
+# generated
+src/generated/
+fixtures/large-dump.json
+```

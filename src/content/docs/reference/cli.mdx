@@ -1,0 +1,75 @@
+---
+title: CLI
+description: Every command and option of the wisdom CLI.
+sidebar:
+  order: 1
+---
+
+Every command finds `.wisdom/` from the current folder upward, the way git finds `.git`. On
+Windows PowerShell with scripts blocked, type `wisdom.cmd`.
+
+`<session>` is a session ID, its first 8 or more characters, or `latest`.
+`<position>` is `t3` (a turn), `t3/c2` (a tool call), `a1` (a subagent), `a1/c2`, or `outside`.
+
+## Set up a project
+
+| Command | What it does |
+| --- | --- |
+| `wisdom connect` | Record plain `claude`, `codex` and `pi` started here, with your own login. Run again to repair. |
+| `wisdom disconnect` | Take out exactly what `connect` added. Recordings are kept. |
+| `wisdom init` | Set up `.wisdom/` and a home for each agent, for `wisdom track`. Run again to repair. |
+| `wisdom doctor` | Check that everything works, and print the fix for each problem. |
+
+## Run an agent
+
+| Command | What it does |
+| --- | --- |
+| `wisdom track claude\|codex\|pi` | Start an agent with its home in this project, recording. |
+| `wisdom resume <session-id>` | Continue a recorded session, still recording. Full ID only. |
+| `wisdom handoff <claude\|codex\|pi\|session-id>` | Continue in a new or existing session that reads another session first. |
+
+## Read a session
+
+| Command | What it does |
+| --- | --- |
+| `wisdom glance` | List recorded sessions, newest first. |
+| `wisdom glance <session>` | One session's shape and every turn. |
+| `wisdom open <position> --capture <session>` | One turn, tool call or subagent, whole. |
+| `wisdom dashboard` | Print the address of the live dashboard. |
+
+## Share a session
+
+| Command | What it does |
+| --- | --- |
+| `wisdom share <session>...` | Write one file to send a teammate, after a secret check. |
+| `wisdom import <file>` | Read a teammate's file here, read-only. |
+| `wisdom export <session>` | Write a session as Markdown, after a secret check. |
+| `wisdom clone <session>` | Carry a session on as a new one, in the same agent. |
+
+## Background service and other
+
+| Command | What it does |
+| --- | --- |
+| `wisdom daemon start\|stop\|status` | Control the background service. |
+| `wisdom daemon run` | Run it in the foreground. |
+| `wisdom mcp` | Serve the optional read-only MCP tool, `ledger`. |
+| `wisdom --version` | Print the version. |
+
+## Options
+
+| Option | Used with | What it does |
+| --- | --- | --- |
+| `--cwd DIR` | any | Use the project at `DIR`. |
+| `--data DIR` | any | Use the data folder `DIR` directly. Also `WISDOM_DATA_DIR`. |
+| `--from N` | `glance`, `open` | Continue a long answer from line `N`. |
+| `--at VERSION` | `glance`, `open` | Read at a fixed version. |
+| `--plain` | `glance`, `open` | In a terminal, print the exact text agents read. |
+| `--from <session-id>` | `handoff` | The session to read. Default: the newest from another agent. |
+| `--port N` | `daemon` | Use exactly this port. |
+| `--no-dashboard` | `daemon` | Don't start the dashboard. |
+| `--claude-bin FILE`, `--codex-bin FILE`, `--pi-entry FILE` | `track` | Use another installation of the agent. |
+| `--setup-hooks` | `track codex` | Review Wisdom's hooks in `/hooks`, first time only. |
+| `--trust-all-hooks` | `track codex` | Skip the review for **every** hook in that run. Only in repositories you trust. |
+| `-- ARGUMENTS` | `track`, `handoff` | `track`: pass the rest to the agent. `handoff`: add it to the first prompt. |
+| `--out FILE` | `share`, `export` | Where to save. Default `.wisdom/shared-out/`. `export --out -` prints it. |
+| `--redact`, `--keep-secrets` | `share`, `export` | Redact or keep what the secret check finds, without asking. |

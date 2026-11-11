@@ -1,40 +1,118 @@
 ---
-title: Welcome to Starlight
-description: Get started building your docs site with Starlight.
-template: splash # Remove or comment out this line to display the site sidebar on this page.
+title: Documentation
+description: Record what your coding agent was asked, did and changed, and read it back later, as a person or as an agent.
+template: splash
+editUrl: false
+lastUpdated: false
 hero:
-  tagline: Congrats on setting up a new Starlight project!
-  image:
-    file: ../../assets/houston.webp
+  title: The intent behind every change your coding agent makes
+  tagline: Wisdom records Claude Code, Codex and Pi sessions on your machine and links every file change to the request and the commands behind it. You read them in a dashboard; your agents read them through a skill.
   actions:
-    - text: Example Guide
-      link: /guides/example/
+    - text: Quick start
+      link: /wisdom-docs/getting-started/quick-start/
       icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
-      icon: external
+    - text: GitHub
+      link: https://github.com/Oqura-ai/wisdom
+      icon: github
       variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+import { TabItem, Tabs } from '@astrojs/starlight/components';
 
-## Next steps
+## Record your first session
 
-<CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
-	</Card>
-	<Card title="Change page layout" icon="document">
-		Delete `template: splash` in `src/content/docs/index.mdx` to display a
-		sidebar on this page.
-	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
-	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
-	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
-	</Card>
-</CardGrid>
+```sh frame="terminal" title="Install and connect"
+npm install -g @oqura/wisdom
+cd your-project
+wisdom connect
+claude          # or codex, or pi: use it as usual
+```
+
+Then read what happened: the session at a glance, then any turn in full. Below is an example
+session, written to show the format.
+
+<Tabs syncKey="read">
+	<TabItem label="glance">
+
+```ansi frame="terminal" title="~/invoice-api"
+[32m❯[39m [1mwisdom glance latest[22m
+[1msession 3f9c2a71[22m[2m-8d4e-4b1a-9c55-2e7f0b6d1a90[22m · [33mclaude-code[39m 2.1.319 · closed (idle) · version 412
+[2mresume with: wisdom resume 3f9c2a71-8d4e-4b1a-9c55-2e7f0b6d1a90[22m
+[2mworkspace /home/maya/invoice-api[22m
+[2mstarted 2026-11-11 09:12Z · ended 2026-11-11 09:41Z[22m
+3 turns · 14 tool calls · [31m1 failed[39m · 3 changes · 0 subagents · 412,906 tokens · $1.8420 reported
+
+[1m[36mt1  [39m[22m[2min[22m        [1mtotals are off by a cent on some invoices, find out why[22m
+    [2mout       [22mEach line item is rounded before the sum, so cents drift on long invoices.
+    [2m6 tool calls[22m[2m · [22m[2mno changes[22m
+
+[1m[36mt2  [39m[22m[2min[22m        [1mfix it and add a test[22m
+    [2mout       [22mTotals now round once, after the sum. A new test covers a 40-line invoice.
+    [2m7 tool calls[22m[2m · [22m[31m1 failed[39m[2m · [22m[2mchanged src/totals.ts, test/totals.test.ts[22m
+
+[1m[36mt3  [39m[22m[2min[22m        [1mcommit it[22m
+    [2mout       [22mCommitted as a4c91e2 "fix: round invoice totals once".
+    [2m1 tool call[22m[2m · [22m[2mno changes[22m
+
+[2mcomplete · 17 lines[22m
+```
+
+	</TabItem>
+	<TabItem label="open t2">
+
+```ansi frame="terminal" title="~/invoice-api"
+[32m❯[39m [1mwisdom open t2 --capture latest[22m
+[1m[36mt2 · [39m[22m[2msession 3f9c2a71 · version 412 · 168,204 tokens[22m
+[2min[22m        [1mfix it and add a test[22m
+
+[2mthinking[22m  [2mredacted · 2.1 s (it happened; its text was not recorded)[22m
+
+[1m[36mc1  [39m[22m[1mEdit[22m src/totals.ts · [32mok[39m · 12 ms · → p1
+    [2minput and output repeat p1 · open t2/c1 to read them[22m
+
+[1m[36mc2  [39m[22m[1mWrite[22m test/totals.test.ts · [32mok[39m · 9 ms · → p2
+    [2minput and output repeat p2 · open t2/c2 to read them[22m
+
+[1m[36mc3  [39m[22m[1mBash[22m · [31mfailed[39m · 1.8 s
+    [2minput[22m     {"command":"npm test -- totals"}
+    [2moutput[22m
+        ✖ rounds a 40-line invoice once (2.1 ms)
+          expected 1204.37, received 1204.35
+
+[1m[36mc4  [39m[22m[1mEdit[22m src/totals.ts · [32mok[39m · 10 ms · → p3
+    [2minput and output repeat p3 · open t2/c4 to read them[22m
+
+[1m[36mc5  [39m[22m[1mBash[22m · [32mok[39m · 1.6 s
+    [2minput[22m     {"command":"npm test -- totals"}
+    [2moutput[22m
+        ✔ rounds a 40-line invoice once (1.9 ms)
+
+[2mreply[22m     Totals now round once, after the sum. A new test covers a 40-line invoice.
+
+[1m[36mp1  [39m[22msrc/totals.ts · modify · [32m+2[39m [31m−2[39m · observed during c1
+[1m    --- src/totals.ts[22m
+[1m    +++ src/totals.ts[22m
+[36m    @@ -8,6 +8,6 @@[39m
+     export function invoiceTotal(lines: Line[]): number {
+[31m    -  return lines.reduce((sum, l) => sum + round(l.qty * l.price), 0);[39m
+[32m    +  const raw = lines.reduce((sum, l) => sum + l.qty * l.price, 0);[39m
+[32m    +  return round(raw);[39m
+     }
+
+[2mcomplete · 29 lines[22m
+```
+
+	</TabItem>
+</Tabs>
+
+## What you get
+
+- Prompts, replies, tool calls and file diffs, recorded as they happened. Nothing is summarized,
+  and gaps in the recording are marked where they occur.
+- One way to read Claude Code, Codex and Pi sessions: for you in the terminal or the dashboard,
+  for your agents through a skill.
+- Hooks that never block your agent. If the background service is down, events wait on disk.
+- Everything stays in the project's `.wisdom/` folder until you choose to share it.
+
+Start with the [quick start](/wisdom-docs/getting-started/quick-start/), or read
+[how it works](/wisdom-docs/concepts/how-it-works/).

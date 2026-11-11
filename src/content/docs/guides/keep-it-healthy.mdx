@@ -1,0 +1,76 @@
+---
+title: Keep it healthy
+description: Check, repair, run the background service, and clean up old sessions.
+sidebar:
+  order: 7
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Wisdom mostly runs on its own. When a session isn't recorded, or after you move Wisdom or
+change Node versions, start here.
+
+## Check
+
+```sh
+wisdom doctor
+```
+
+Checks the background service, the dashboard, each agent's hooks and version, Codex hook trust,
+and events waiting to be recorded. It changes nothing and prints the fix for each problem.
+
+| Level | Meaning |
+| --- | --- |
+| `ok` | Working. |
+| `note` | Worth knowing: the service is stopped (it starts by itself), or an agent is newer than the last tested version. |
+| `problem` | Recording or reading is affected until you run the fix. |
+
+The same checks run at the top of every dashboard page.
+
+## Repair
+
+Hooks store the full path of the installed Wisdom. They break when that path changes: you moved
+the install, or switched Node versions with nvm. Your agent keeps working either way; only live
+recording stops.
+
+```sh
+wisdom connect      # a connected project
+wisdom init         # a tracked project
+```
+
+Both are safe to run again. In the dashboard, **Repair…** does the same and backs up every file
+it changes first, so you can restore it. Codex asks you to approve changed hooks again in `/hooks`.
+
+## The background service
+
+It starts by itself when a hook or command needs it, and keeps running after your agent exits.
+
+```sh
+wisdom daemon status
+wisdom daemon stop        # the next hook starts it again
+wisdom daemon start
+```
+
+It listens on `127.0.0.1:7434`, and the dashboard on the next port. If another project already
+uses them, it takes the next free pair. Each project has its own service.
+
+## Storage and delete
+
+The dashboard's overview shows how much space each session takes. **Clean up…** lists sessions
+not active for 30 days (change the number), and each session page has **Delete**.
+
+Nothing is deleted until you've read what goes and confirmed: the session's record, its
+evidence, and its files in the project's agent home. For a connected session, a checkbox (off
+by default) also deletes the agent's own copy in your home folder; then the agent can no longer
+resume it.
+
+<Aside type="caution">
+Deleting can't be undone, and Wisdom never deletes on a schedule. A session still recording
+can't be deleted until it ends.
+</Aside>
+
+## Move or back up a project
+
+Stop the service first (`wisdom daemon stop`), then move or copy the whole folder. Recording
+carries on in the new place. For a backup, copy all of `.wisdom/`, and treat the copy like a
+password: it holds your sessions unredacted, and in a tracked project, your agents' logins.

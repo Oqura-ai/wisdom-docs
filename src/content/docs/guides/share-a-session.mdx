@@ -1,0 +1,88 @@
+---
+title: Share a session
+description: Send a session to a teammate, read one you received, or export one as Markdown.
+sidebar:
+  order: 5
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Flow from '../../../components/Flow.astro';
+
+Recordings never leave your machine on their own. These commands are the only way out, and
+each one checks for secrets first.
+
+<Flow
+	label="wisdom share checks for secrets and writes one file; you send it; your teammate runs wisdom import and reads it read-only."
+	steps={[
+		{ title: 'wisdom share', note: 'secret check, then one file' },
+		{ title: 'You send it', note: 'chat, email, a drive' },
+		{ title: 'wisdom import', note: 'on your teammate\'s machine' },
+		{ title: 'Read-only copy', note: '<code>glance</code>, <code>open</code>, clone or hand off' },
+	]}
+/>
+
+## Share
+
+```sh
+wisdom share 0f3c8a1e
+wisdom share 0f3c8a1e 01a1aca0 --out a.wisdom-share
+```
+
+This writes one file with the sessions' records, diffs and transcript copies. It never holds
+logins. By default it goes to `.wisdom/shared-out/`, which git ignores.
+
+## The secret check
+
+Before writing anything, Wisdom lists every value that looks like a secret (API keys, tokens,
+private keys, `PASSWORD=` and similar) or a personal detail such as an email address, masked,
+with where it appears:
+
+```txt frame="terminal"
+Found 2 possible secrets:
+  1  openai-key         sk-pro…3456       t1 · Bash output  (and 2 other places)
+  2  secret-assignment  hu…               t1 · patch of notes.txt
+
+Redact all and share? [r] redact all  [c] choose one by one  [k] keep all  [x] cancel:
+```
+
+| Choice | Effect |
+| --- | --- |
+| Redact | Replaces the value with `[redacted by sender: <kind>]` in the file. Your own recording is never changed. |
+| Keep | Sends it as it is, for example a fake key a test depends on. |
+| Cancel | Writes nothing. So does any answer it doesn't understand. |
+
+In a script, pass `--redact` or `--keep-secrets`. Without either, nothing is written.
+
+<Aside type="caution">
+The check finds the shapes it knows and will miss others. Look through what you send.
+</Aside>
+
+## Import
+
+```sh
+wisdom import 0f3c8a1e-20261106-1402.wisdom-share
+```
+
+Or drop the file into `.wisdom/shared/`, and the service imports it within a few seconds.
+It's kept as its own read-only copy, never mixed into your recordings, and listed under
+"shared with you":
+
+```txt frame="terminal"
+shared with you · 1, read-only
+
+0f3c8a1e-…  claude-code  2026-11-06 10:00Z  3 turns  from shop-api, shared 2026-11-06 14:02Z
+```
+
+Read it like any session. You can't resume someone else's recording, but you can
+[clone it or hand it off](../hand-off-work/) to carry the work on.
+
+## Export as Markdown
+
+```sh
+wisdom export 0f3c8a1e --out session.md
+wisdom export 0f3c8a1e --redact --out -      # print it, to paste
+```
+
+One Markdown document for people without Wisdom: a PR description, an issue. Every prompt and
+reply is in full, each tool call is a folded block, and each turn's changes follow as `diff`
+blocks. GitHub and GitLab open and close the folds. The same secret check runs first.

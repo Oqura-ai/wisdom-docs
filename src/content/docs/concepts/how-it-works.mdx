@@ -1,0 +1,63 @@
+---
+title: How it works
+description: How an event travels from your agent's hook to a record you can read.
+sidebar:
+  order: 1
+---
+
+import Flow from '../../../components/Flow.astro';
+
+Wisdom has three parts: hooks inside your agent, a background service on your machine, and the
+readers (the CLI, the dashboard and your agents' skill). This page follows one event through
+them.
+
+![How Wisdom works: Claude Code and Codex send events through hooks, and Pi through an extension, to a local daemon on 127.0.0.1 that never blocks the agent. It saves them in the project's .wisdom folder: SQLite, diffs and transcript copies. The dashboard, the CLI (glance, open) and the agent skill read it.](../../../assets/how-it-works.svg)
+
+## One event's path
+
+<Flow
+	label="The agent's hook posts an event to the daemon; the daemon links it to its session; it diffs the files the tool touched; it stores the record."
+	steps={[
+		{ title: 'Hook fires', note: 'a prompt, a tool starting or finishing' },
+		{ title: 'Daemon', note: 'finds the session the event names' },
+		{ title: 'Files diffed', note: 'what changed while the tool ran' },
+		{ title: 'Stored', note: 'SQLite record + payload on disk' },
+	]}
+/>
+
+1. The agent's own hook fires. Claude Code and Codex call Wisdom's hook; Pi loads Wisdom's
+   extension. The hook posts the event to the background service and returns at once.
+2. The service finds the session. Every event names its agent's session ID. The first
+   event opens a record for it; a later one, after a pause or a resume, continues it.
+3. The service compares files. It keeps a baseline of the project's files in memory.
+   When a tool finishes, it checks what changed and stores a diff, labelled with the tool call
+   that was running.
+4. The record goes into SQLite. Large bodies (tool output, diffs)
+   are saved as files named by their SHA-256 hash. The agent's own transcript is copied
+   byte for byte beside it.
+
+If the service can't take the event, the hook writes it to `.wisdom/spool/`, starts the
+service, and returns.
+
+## One session, one record
+
+Wisdom records each session under the agent's own session ID; there's no second ID. Two
+sessions running at once, such as a background `/fork`, are two records. A record closes when
+the agent ends the session, or after 10 idle minutes, and the next event continues it.
+
+## Who changed a file
+
+Wisdom sees when a file changed, not who changed it:
+
+- `observed during c1`: the change happened while tool call `c1` was running. Usually
+  that call made it, but timing isn't proof.
+- `external-or-unknown`: no tool was running. You, your editor, or another process.
+
+Two agents working in one folder see each other's changes. Wisdom labels them honestly, but
+can't tell them apart.
+
+## Reads that hold still
+
+Every record gets a version number, and every answer states the version it read. Pass it back
+with `--at` and you see exactly the same evidence, even while the session keeps recording.
+This is how a long answer can be read in pages without gaps or repeats.

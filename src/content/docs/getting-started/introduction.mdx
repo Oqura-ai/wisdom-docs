@@ -1,0 +1,89 @@
+---
+title: What is Wisdom?
+description: An open-source recorder for coding agents, and the way you and your agents read what it recorded.
+sidebar:
+  label: Introduction
+  order: 1
+---
+
+import Agents from '../../../components/Agents.astro';
+
+Wisdom records your coding agent's sessions on your own machine: what you asked, what the
+agent ran, which files it changed, and what it said it did. You read
+those sessions in the terminal or a local dashboard, and your agents read them through a
+skill, so the next agent starts from what actually happened.
+
+It works with:
+
+<Agents />
+
+## What you can do with it
+
+- Review an agent's work against the request behind it, not only against its final reply.
+- See the test that failed before the fix, and the approach the agent tried and dropped.
+- Hand unfinished work to another agent, even a different one, that reads the session first.
+- Find the session behind a change weeks later, from the terminal or from any agent.
+
+A diff shows what changed. The session shows why, and it's gone once the terminal closes
+unless something records it.
+
+## How it works
+
+![How Wisdom works: Claude Code and Codex send events through hooks, and Pi through an extension, to a local daemon on 127.0.0.1 that never blocks the agent. It saves them in the project's .wisdom folder: SQLite, diffs and transcript copies. The dashboard, the CLI (glance, open) and the agent skill read it.](../../../assets/how-it-works.svg)
+
+1. Your agent's own hooks send each event (a prompt, a tool call, its result) to a small
+   background service on `127.0.0.1`.
+2. The service saves it in the project's `.wisdom/` folder, together with a byte-for-byte copy
+   of the agent's transcript and a diff of every file change it observed.
+3. You read it in the dashboard or the terminal. Your agents read it through a skill Wisdom
+   gives them.
+
+More detail in [How it works](../../concepts/how-it-works/).
+
+## Where to start
+
+- [Installation](../installation/): Node.js 24 and one npm command.
+- [Quick start](../quick-start/): record your first session and read it back, in about five minutes.
+- [Record sessions](../../guides/record-sessions/): the two ways to record, and which one to pick.
+
+For coding agents, these docs are also published as plain text:
+[`llms.txt`](/wisdom-docs/llms.txt) is the index, and
+[`llms-full.txt`](/wisdom-docs/llms-full.txt) has every page in one file.
+
+## Common questions
+
+<details>
+<summary>Does it slow down my agent?</summary>
+
+Each hook sends one request to a service on your own machine. If the service doesn't answer,
+the hook writes the event to disk and the agent carries on. Wisdom never blocks your agent.
+</details>
+
+<details>
+<summary>Does it send my code or prompts anywhere?</summary>
+
+No. Everything stays in the project's `.wisdom/` folder. A recording leaves your machine only
+when you run [`wisdom share` or `wisdom export`](../../guides/share-a-session/), and both check
+for secrets first.
+</details>
+
+<details>
+<summary>Does it use a model, or cost tokens?</summary>
+
+Recording uses no model and costs nothing. Nothing is summarized. When one of your agents reads
+a session, that reading counts toward your agent's own usage, like any other command output.
+</details>
+
+<details>
+<summary>Do I need to change how I start my agent?</summary>
+
+No. After `wisdom connect`, you start `claude`, `codex` or `pi` as usual, with your own login.
+See [Record sessions](../../guides/record-sessions/) for the one rule each agent has.
+</details>
+
+<details>
+<summary>Does it change my global agent settings?</summary>
+
+No. Wisdom never edits `~/.claude`, `~/.codex` or `~/.pi/agent`. It writes only to the
+project's own settings, keeps them out of git, and `wisdom disconnect` removes exactly that.
+</details>

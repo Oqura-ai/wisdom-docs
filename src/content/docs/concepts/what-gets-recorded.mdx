@@ -1,0 +1,57 @@
+---
+title: What gets recorded
+description: What Wisdom keeps, what it can't see, and how it marks the difference.
+sidebar:
+  order: 2
+---
+
+Wisdom records what the agent reports and what it can observe on disk. Where it can't see
+something, it marks the gap in place.
+
+## Principles
+
+1. Records are only added. Transcripts are copied byte for byte.
+   Nothing is edited later, except when you delete a session.
+2. Nothing is summarized or generated. What you read is what
+   happened.
+3. A gap is listed as `not recorded`, with the reason.
+4. Labels state only what was observed. A change seen during a tool call is timing, not
+   authorship, and a tool that finished is not proof the code is right.
+
+## Kept
+
+| Item | Recorded as |
+| --- | --- |
+| Your prompts | In full, as typed |
+| Replies | In full |
+| Thinking | When the agent records it; otherwise `redacted` with its duration |
+| Tool calls | Full input and output, status, duration |
+| File changes | A unified diff of each one, with the tool call it happened during |
+| Subagents | Their task, calls, changes and report |
+| Tokens and cost | As the agent reports them |
+| The agent's transcript | A byte-for-byte copy |
+
+## Not seen
+
+| What | Why | How it shows |
+| --- | --- | --- |
+| Thinking text the provider encrypts | The agent never has it in plain text | `thinking  redacted` |
+| Changes while the service was down | No baseline to compare against | `not recorded  delivered-late` |
+| Changes between visits | Nothing was recording | `not recorded  not-recording-between-visits` |
+| A session whose hooks never ran | Only the agent's file exists | `in (from session file)`, `not-recorded-live` |
+| Edits by other processes | Not a tool call | `external-or-unknown` |
+| A tool that never reported back | No result arrived | `no result recorded` |
+| Very large projects | Past 10,000 files or 64 MiB, files aren't diffed | `not recorded` with the limit |
+
+Folders such as `.git`, `node_modules`, `dist` and `build` are never diffed. Add your own in
+[`.wisdomignore`](../../guides/record-sessions/#leaving-files-out).
+
+## Per agent
+
+| | Claude Code | Codex | Pi |
+| --- | --- | --- | --- |
+| Reports through | Hooks | Hooks, once trusted | Extension |
+| Thinking | When recorded | Usually encrypted | When recorded |
+| Cost | Per session | Not reported (dashboard estimates) | Per message |
+
+Versions and details: [Harness support](../../reference/harness-support/).

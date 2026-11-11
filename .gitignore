@@ -19,3 +19,10 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+.wisdom/
+
+# pulled from the wisdom repo at build time (scripts/sync-vocabulary.mjs)
+src/content/docs/reference/vocabulary.md
+
+# share files never belong in git
+*.wisdom-share

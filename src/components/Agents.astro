@@ -1,0 +1,44 @@
+---
+/** The three agents Wisdom records, each with the icon the dashboard uses. */
+import { Image } from 'astro:assets';
+import claude from '../assets/agents/claude-code.svg';
+import codex from '../assets/agents/codex.png';
+import pi from '../assets/agents/pi.svg';
+const agents = [
+	{ name: 'Claude Code', icon: claude, href: 'https://code.claude.com' },
+	{ name: 'Codex CLI', icon: codex, href: 'https://developers.openai.com/codex' },
+	{ name: 'Pi', icon: pi, href: 'https://pi.dev' },
+];
+---
+
+<ul class="agents not-content">
+	{agents.map(agent => (
+		<li><a href={agent.href}><Image src={agent.icon} alt="" width={22} height={22} />{agent.name}</a></li>
+	))}
+</ul>
+
+<style>
+	.agents {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.5rem;
+		margin: 1rem 0 0;
+		padding: 0;
+		list-style: none;
+	}
+	a {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		color: var(--sl-color-white);
+		font-size: var(--sl-text-sm);
+		text-decoration: none;
+	}
+	a:hover {
+		text-decoration: underline;
+		text-underline-offset: 0.22em;
+	}
+	img {
+		border-radius: 50%;
+	}
+</style>

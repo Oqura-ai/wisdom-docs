@@ -1,0 +1,119 @@
+---
+title: Read a session
+description: See a session at a glance, open the turn that matters, and read its labels.
+sidebar:
+  order: 2
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Reading a session takes two moves: **glance** to see its shape, then **open** the part that
+matters. Your agents use the same two moves, through their skill.
+
+```sh
+wisdom glance                          # every recorded session, newest first
+wisdom glance latest                   # one session: its shape and every turn
+wisdom open t2 --capture latest        # turn 2, whole
+```
+
+Name a session by its full ID, by its first 8 or more characters, or as `latest` (the newest
+session with a turn). Every command finds `.wisdom/` from the folder you're in, like git
+finds `.git`.
+
+## Positions
+
+Everything in a session has a short address. A glance shows them; `open` takes them.
+
+| Position | What it opens |
+| --- | --- |
+| `t3` | Turn 3: your third prompt and everything the agent did until it answered |
+| `t3/c2` | The second tool call of turn 3, its full input and output |
+| `a1` | The first subagent, laid out like a turn |
+| `a1/c2` | A tool call of that subagent |
+| `outside` | Calls and file changes outside any turn |
+
+`p1`, `p2`… label the file changes inside a turn. They aren't addresses: open the turn or the
+call to see them.
+
+## Opening a turn
+
+A turn comes back in recorded order: thinking, each call with its result, the reply, and then
+all the turn's file changes together, as diffs. An example:
+
+```ansi frame="terminal" title="~/invoice-api"
+[32m❯[39m [1mwisdom open t2 --capture latest[22m
+[1m[36mt2 · [39m[22m[2msession 3f9c2a71 · version 412 · 168,204 tokens[22m
+[2min[22m        [1mfix it and add a test[22m
+
+[2mthinking[22m  [2mredacted · 2.1 s (it happened; its text was not recorded)[22m
+
+[1m[36mc1  [39m[22m[1mEdit[22m src/totals.ts · [32mok[39m · 12 ms · → p1
+    [2minput and output repeat p1 · open t2/c1 to read them[22m
+
+[1m[36mc2  [39m[22m[1mWrite[22m test/totals.test.ts · [32mok[39m · 9 ms · → p2
+    [2minput and output repeat p2 · open t2/c2 to read them[22m
+
+[1m[36mc3  [39m[22m[1mBash[22m · [31mfailed[39m · 1.8 s
+    [2minput[22m     {"command":"npm test -- totals"}
+    [2moutput[22m
+        ✖ rounds a 40-line invoice once (2.1 ms)
+          expected 1204.37, received 1204.35
+
+[1m[36mc4  [39m[22m[1mEdit[22m src/totals.ts · [32mok[39m · 10 ms · → p3
+    [2minput and output repeat p3 · open t2/c4 to read them[22m
+
+[1m[36mc5  [39m[22m[1mBash[22m · [32mok[39m · 1.6 s
+    [2minput[22m     {"command":"npm test -- totals"}
+    [2moutput[22m
+        ✔ rounds a 40-line invoice once (1.9 ms)
+
+[2mreply[22m     Totals now round once, after the sum. A new test covers a 40-line invoice.
+
+[1m[36mp1  [39m[22msrc/totals.ts · modify · [32m+2[39m [31m−2[39m · observed during c1
+[1m    --- src/totals.ts[22m
+[1m    +++ src/totals.ts[22m
+[36m    @@ -8,6 +8,6 @@[39m
+     export function invoiceTotal(lines: Line[]): number {
+[31m    -  return lines.reduce((sum, l) => sum + round(l.qty * l.price), 0);[39m
+[32m    +  const raw = lines.reduce((sum, l) => sum + l.qty * l.price, 0);[39m
+[32m    +  return round(raw);[39m
+     }
+
+[2mcomplete · 29 lines[22m
+```
+
+Each piece of evidence is shown once. An edit's input *is* its diff, so the call points to
+`p1` instead of repeating it. A file the agent read is listed by size; open the call to read it.
+
+## In a terminal, or piped
+
+In a terminal, `glance` and `open` are coloured and fitted to its width. A long prompt or
+tool output is folded, and the fold names the command that shows it whole. No word is
+changed.
+
+Piped to a file or another program, or with `--plain`, you get the exact text your agents
+read: uncoloured and unfolded.
+
+```sh
+wisdom open t2 --capture latest --plain > turn.txt
+```
+
+## Reading the labels
+
+These labels say how much the record can tell you:
+
+| Label | What it means |
+| --- | --- |
+| `observed during c1` | The file changed while that call ran. Timing, not proof the call made it. |
+| `external-or-unknown` | The file changed while no tool was running: you, your editor, another process. |
+| `thinking  redacted` | The agent thought, but its text wasn't recorded (Claude Code omits it; Codex encrypts it). |
+| `not recorded` | A gap in the recording, with the reason. |
+| `no result recorded` | The call never reported back. Not the same as success. |
+| `ok` | The tool reported success. Not proof the code is right. |
+
+<Aside title="Long answers">
+One answer holds at most 80,000 characters. A longer one ends with
+`limited · lines 1–1,950 of 41,230 · continue: {…}` and the exact way to get the rest: add
+`--from` and `--at` as shown. `--at` pins the version, so a session that's still recording
+can't change under you while you read.
+</Aside>

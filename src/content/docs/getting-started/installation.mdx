@@ -1,0 +1,92 @@
+---
+title: Installation
+description: Install Wisdom with npm, check it works, update or remove it.
+sidebar:
+  order: 2
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Wisdom is one npm package. Install it once per machine, then connect each project you want to
+record.
+
+## Requirements
+
+- **Node.js 24 or newer.** Wisdom uses the SQLite built into Node, so there's no database to
+  install. On an older Node, every `wisdom` command stops with
+  `Wisdom needs Node.js 24 or newer. This is v22.x.` Check yours with `node --version`.
+- **Claude Code, Codex (0.164.0 or newer) or Pi.**
+
+## Install
+
+<Tabs syncKey="os">
+	<TabItem label="macOS / Linux">
+
+	```sh
+	npm install -g @oqura/wisdom
+	wisdom --version
+	```
+
+	</TabItem>
+	<TabItem label="Windows">
+
+	```powershell
+	npm install -g @oqura/wisdom
+	wisdom --version
+	```
+
+	If PowerShell blocks scripts, use `npm.cmd` and `wisdom.cmd` in their place.
+
+	</TabItem>
+</Tabs>
+
+<Aside type="caution" title="Install globally, not with npx">
+Each project's hooks store the path to the installed copy of Wisdom. An `npx` copy lives in a
+cache folder that can disappear, and recording stops with it.
+</Aside>
+
+## Check a project
+
+```sh
+wisdom doctor
+```
+
+Run it inside a project. It checks the background service, each agent's hooks and version,
+and any events waiting to be recorded. It changes nothing, and prints the command that fixes
+each problem it finds.
+
+## Update
+
+```sh
+wisdom daemon stop                    # in each project
+npm install -g @oqura/wisdom@latest
+wisdom doctor
+```
+
+Your recorded sessions are kept across updates.
+
+<Aside type="note" title="Switched Node versions?">
+Version managers such as nvm keep global packages per Node version. If you switch, install
+Wisdom again under the new version, then run `wisdom init` in the project to point its hooks
+at the new copy.
+</Aside>
+
+## Uninstall
+
+1. In each connected project, remove Wisdom's hooks and stop the service:
+
+   ```sh
+   wisdom disconnect
+   wisdom daemon stop
+   ```
+
+2. Remove the package:
+
+   ```sh
+   npm uninstall -g @oqura/wisdom
+   ```
+
+Your recordings stay in each project's `.wisdom/` folder until you delete it. Wisdom never
+changes `~/.claude`, `~/.codex` or `~/.pi/agent`, so your agents work exactly as before.
+
+Next: [Quick start](../quick-start/).

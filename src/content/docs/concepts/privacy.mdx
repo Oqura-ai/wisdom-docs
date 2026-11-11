@@ -1,0 +1,47 @@
+---
+title: Privacy
+description: Where your recordings live, what's in them, and the only ways they leave your machine.
+sidebar:
+  order: 3
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Wisdom keeps exact recordings, which is what makes them useful, and also why they need care.
+This page covers where they live and how to keep them private.
+
+## Everything stays local
+
+Recordings live in the project's `.wisdom/` folder. The background service and the dashboard
+listen only on `127.0.0.1`, and every request needs a token stored in `.wisdom/daemon.json`.
+Nothing is uploaded, and no model reads your sessions.
+
+## What's in `.wisdom/`
+
+Your sessions **exactly as they happened**: prompts, tool output, diffs, transcripts. If a key
+appeared in a command's output, it's in there. In a tracked project, `.wisdom/` also holds each
+agent's login.
+
+<Aside type="caution" title="Treat .wisdom/ like a password">
+Git ignores it, but zips, copies, shared drives and synced folders don't. Keep it out of them.
+</Aside>
+
+## The only ways out
+
+A recording leaves your machine only when you run one of these:
+
+| Command | Writes | Secret check |
+| --- | --- | --- |
+| `wisdom share` | One file for a teammate, with no logins | Yes |
+| `wisdom export` | A Markdown document | Yes |
+
+The check lists each value that looks like a key, token, password or email address, and you
+choose to redact it, keep it, or cancel. Redaction changes only the file you send, never your
+recording. See [Share a session](../../guides/share-a-session/).
+
+## Your global settings
+
+Wisdom never edits `~/.claude`, `~/.codex` or `~/.pi/agent`. `wisdom connect` writes only to
+the project's own settings, kept out of git, and `wisdom disconnect` removes exactly that. The
+one exception is yours to choose: deleting a connected session with **Also delete the
+harness's own copy** ticked.

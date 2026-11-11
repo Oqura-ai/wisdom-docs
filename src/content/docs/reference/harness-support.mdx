@@ -1,0 +1,53 @@
+---
+title: Harness support
+description: The agents Wisdom records, the versions tested, and what each one reports.
+sidebar:
+  order: 3
+---
+
+import Agents from '../../../components/Agents.astro';
+
+A harness is the coding agent Wisdom records. Each has its own adapter; none is central, and
+all of them read the same way.
+
+<Agents />
+
+|  | Claude Code | Codex | Pi |
+| --- | --- | --- | --- |
+| Last tested | 2.1.319 | 0.166.0 (0.164.0 minimum) | 1.2.0 |
+| Reports through | Hooks | Hooks, once trusted | Extension |
+| Connected settings | `.claude/settings.local.json` | `.codex/hooks.json` | `.pi/settings.json` |
+| Connected: start in | The project's top folder | Any folder in the project, not a git worktree | The project's top folder |
+| Tracked home variable | `CLAUDE_CONFIG_DIR` | `CODEX_HOME` | `PI_CODING_AGENT_DIR` |
+| Tracked first run | `wisdom track claude`, log in | `wisdom track codex --setup-hooks`, trust, log in | `wisdom track pi`, `/login` |
+| Thinking | When recorded, else `redacted` | Usually encrypted, `redacted` | When recorded |
+| Cost | Total per session | Not reported; the dashboard estimates it | Per message |
+| Optional MCP `ledger` tool | Through `wisdom track` | Through `wisdom track` | Not available |
+
+`wisdom doctor` says when an agent is newer than the last tested version. A newer version
+usually works, but an agent can change its transcript format.
+
+## Claude Code
+
+- Its hooks are the main evidence; its transcript format is internal, so the copy backs them up.
+- A background `/fork` is recorded as its own session and can outlive its terminal.
+- A finished background command wakes the agent; that turn shows as `in (harness notice)`.
+
+## Codex
+
+- Codex runs a hook only after you review it in `/hooks`. Until then, sessions are read from
+  their own files, marked `not-recorded-live`.
+- Its thinking is usually encrypted, and it reports tokens but not cost.
+- Calls marked `script step` are Codex's own scripting (`exec`, `wait`); the `Bash` or
+  `apply_patch` calls beside them are the real actions.
+
+## Pi
+
+- Recorded through an extension. Inside Pi, `/wisdom-status` reports the session.
+- In a tracked home, Wisdom chooses where Pi stores sessions, so `--session-dir` is refused.
+
+## Finding the agent
+
+Wisdom finds `claude`, `codex` and `pi` on your `PATH`, as your shell does. On Windows it
+follows npm's `.cmd` shims to the real program. `--claude-bin`, `--codex-bin` and `--pi-entry`
+name another installation.

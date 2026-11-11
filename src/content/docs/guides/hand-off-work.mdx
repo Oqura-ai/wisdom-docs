@@ -1,0 +1,80 @@
+---
+title: Hand off work
+description: Carry work on in another agent, the same session, or a copy of it.
+sidebar:
+  order: 4
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Flow from '../../../components/Flow.astro';
+
+An agent runs out of context, or you want a different one to finish the job. Wisdom gives you
+three ways to carry the work on:
+
+| You want to… | Use | What you get |
+| --- | --- | --- |
+| Continue in **another agent** | `wisdom handoff` | A new session that reads the old one first |
+| Continue **the same session** | `wisdom resume` | The same session, still recording |
+| Continue **a copy** of a session | `wisdom clone` | A new session of the same agent, holding the old conversation |
+
+## Handoff
+
+```sh
+wisdom handoff codex
+```
+
+This starts a new Codex session whose first prompt names the last session from another agent
+and tells Codex to read it with `glance` and `open` before changing anything.
+
+<Flow
+	label="A Claude Code session is recorded; wisdom handoff codex starts Codex with a prompt naming it; Codex reads it with glance and open, then continues."
+	steps={[
+		{ title: 'Claude Code session', note: 'recorded by Wisdom', tone: 'var(--wisdom-claude-code)' },
+		{ title: 'wisdom handoff codex', note: 'first prompt names the session' },
+		{ title: 'Codex reads it', note: '<code>glance</code>, then <code>open</code> the turns it needs', tone: 'var(--wisdom-codex)' },
+		{ title: 'Codex continues', note: 'linked to the session it read' },
+	]}
+/>
+
+Nothing is summarized or pasted in. The new agent reads the record itself, as much as it needs.
+
+```sh
+wisdom handoff pi --from 0f3c8a1e-…           # name the session to read (full ID)
+wisdom handoff codex -- also run the tests    # add your own words to the first prompt
+wisdom handoff 0f3c8a1e-… --from 01a1aca0-…   # an existing session reads another one
+```
+
+Both sessions show the link. A glance of the new one says `continues <id> (<harness>)`; an
+existing one says `continued after <id> (<harness>)`.
+
+<Aside type="note">
+A session that's still running can't take outside input. Handing off into one prints the
+prompt for you to paste instead.
+</Aside>
+
+## Resume
+
+```sh
+wisdom resume 0f3c8a1e-77b2-4c10-9a5e-2d81c6f04b3a
+```
+
+Continues a session in its own agent and folder, still recording. It takes the **full** ID,
+so it can never land in the wrong session; `wisdom glance` prints the exact command as
+`resume with:`. The time in between is marked as a gap, because file changes then weren't
+observed.
+
+## Clone
+
+```sh
+wisdom clone 0f3c8a1e
+```
+
+A clone is a **new** session of the same agent that already holds the other session's
+conversation, so the agent carries on as if it had done that work. The original is never
+changed. The source can be one of your sessions, or one a teammate
+[shared with you](../share-a-session/).
+
+- Only prompts after the clone count as its turns. The copied ones stay readable in the original.
+- The clone compares the files the session changed with your disk, and names any that differ.
+- The whole history goes to your model with the first prompt, and that usage counts.
+- Same agent only. To move to another agent, use `handoff`.

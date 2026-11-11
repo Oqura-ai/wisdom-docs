@@ -1,0 +1,53 @@
+---
+/** The page title, with the sidebar group it belongs to above it and its description below,
+ * as product docs commonly lay out a page's head. Replaces Starlight's PageTitle. */
+// Starlight links its skip link and table of contents to this ID.
+const PAGE_TITLE_ID = '_top';
+
+const { entry, sidebar } = Astro.locals.starlightRoute;
+
+type Entry = (typeof sidebar)[number];
+/** The label of the group that holds the current page, searched depth-first. */
+function section(entries: Entry[], parent?: string): string | undefined {
+	for (const item of entries) {
+		if (item.type === 'link' && item.isCurrent) return parent;
+		if (item.type === 'group') {
+			const found = section(item.entries, item.label);
+			if (found) return found;
+		}
+	}
+}
+const group = section(sidebar);
+---
+
+<header class="page-head">
+	{group && <p class="section">{group}</p>}
+	<h1 id={PAGE_TITLE_ID}>{entry.data.title}</h1>
+	{entry.data.description && <p class="lede">{entry.data.description}</p>}
+</header>
+
+<style>
+	.page-head {
+		margin-top: 0.5rem;
+	}
+	.section {
+		margin: 0 0 0.5rem;
+		font-size: var(--sl-text-sm);
+		font-weight: 500;
+		color: var(--sl-color-accent);
+	}
+	h1 {
+		margin: 0;
+		font-size: 1.875rem;
+		font-weight: 700;
+		line-height: 1.2;
+		letter-spacing: -0.02em;
+		color: var(--sl-color-white);
+	}
+	.lede {
+		margin: 0.6rem 0 0;
+		font-size: 1.125rem;
+		line-height: 1.6;
+		color: var(--sl-color-gray-3);
+	}
+</style>

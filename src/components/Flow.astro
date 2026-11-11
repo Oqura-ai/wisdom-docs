@@ -1,0 +1,85 @@
+---
+/** A short left-to-right flow of steps, each with a title and a note. Stacks on phones and
+ * follows the site's light and dark themes. `tone` colours a step's dot (a harness colour). */
+interface Step { title: string; note?: string; tone?: string }
+interface Props { steps: Step[]; label: string }
+const { steps, label } = Astro.props;
+---
+
+<figure class="flow" aria-label={label}>
+	{steps.map((step, i) => (
+		<>
+			{i > 0 && <div class="arrow" aria-hidden="true" />}
+			<div class="step">
+				<strong>{step.tone && <span class="dot" style={`background: ${step.tone}`} />}{step.title}</strong>
+				{step.note && <small set:html={step.note} />}
+			</div>
+		</>
+	))}
+</figure>
+
+<style>
+	.flow {
+		display: flex;
+		align-items: stretch;
+		gap: 0.5rem;
+		margin: 1.5rem 0;
+		padding: 1rem;
+		border: 1px solid var(--sl-color-gray-5);
+		border-radius: 0.75rem;
+		background: var(--sl-color-gray-6);
+	}
+	:global([data-theme='light']) .flow {
+		background: var(--sl-color-gray-7);
+	}
+	.step {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+		margin: 0 !important;
+		padding: 0.6rem 0.8rem;
+		border: 1px solid var(--sl-color-gray-5);
+		border-radius: 0.6rem;
+		background: var(--sl-color-black);
+		font-size: var(--sl-text-sm);
+		line-height: 1.35;
+	}
+	.step strong {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		color: var(--sl-color-white);
+	}
+	.step small {
+		font-size: var(--sl-text-xs);
+		color: var(--sl-color-gray-3);
+	}
+	.dot {
+		width: 0.55rem;
+		height: 0.55rem;
+		border-radius: 50%;
+		flex: none;
+	}
+	.arrow {
+		display: flex;
+		align-items: center;
+		margin: 0 !important;
+		color: var(--sl-color-accent);
+	}
+	.arrow::after {
+		content: '→';
+		font-size: 1.3rem;
+	}
+	@media (max-width: 40rem) {
+		.flow {
+			flex-direction: column;
+		}
+		.arrow {
+			justify-content: center;
+		}
+		.arrow::after {
+			content: '↓';
+		}
+	}
+</style>

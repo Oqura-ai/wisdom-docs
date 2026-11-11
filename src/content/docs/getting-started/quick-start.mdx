@@ -1,0 +1,135 @@
+---
+title: Quick start
+description: Connect a project, use your agent as usual, and read what it did. About five minutes.
+sidebar:
+  order: 3
+---
+
+import { Aside, Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Record one session with your normal agent login, then read it back in the terminal, in the
+dashboard, and through your agent.
+
+You need:
+
+- Wisdom [installed](../installation/) (Node.js 24 or newer).
+- A project folder, ideally a git repository.
+- Claude Code, Codex or Pi.
+
+<details>
+<summary>Prefer to let your agent set it up? Copy this prompt.</summary>
+
+```txt title="Prompt"
+Set up Wisdom (npm package @oqura/wisdom) in this project:
+1. Run `node --version`. If it is older than 24, stop and tell me.
+2. Install it globally: `npm install -g @oqura/wisdom`. Do not use npx.
+   On Windows PowerShell, use `npm.cmd` and `wisdom.cmd`.
+3. In the project's top folder, run `wisdom connect` and show me its output.
+4. Run `wisdom doctor` and tell me about any problem it reports, with the fix it prints.
+Do not edit any other files.
+```
+
+When it's done, quit the agent and start it again in the project's top folder, so the new
+session loads Wisdom's hook. Then carry on from step 2 below.
+</details>
+
+<Steps>
+
+1. **Connect your project.**
+
+   ```sh
+   cd your-project
+   wisdom connect
+   ```
+
+   Wisdom adds its hook and reading skill to the project's own agent settings, keeps those
+   files out of git, and tells you how to start each agent:
+
+   ```txt
+   Wisdom is set up in /home/maya/invoice-api. Start your agent here as you always do, with your own login:
+
+     Claude Code  claude   (start it in this folder, not a subfolder)
+     Codex        codex    (trust this project if it asks, then review Wisdom's hooks once in /hooks)
+     Pi           pi       (start it in this folder, and trust this project when it asks)
+   ```
+
+2. **Use your agent as you always do,** from the project's top folder.
+
+   <Tabs syncKey="agent">
+   	<TabItem label="Claude Code">
+
+   	```sh
+   	claude
+   	```
+
+   	Nothing else to set up. A session started in a subfolder isn't recorded, because Claude
+   	Code loads project settings only from the top folder.
+
+   	</TabItem>
+   	<TabItem label="Codex">
+
+   	```sh
+   	codex
+   	```
+
+   	The first time, Codex asks you to trust the project. Then run `/hooks` and approve
+   	Wisdom's hooks. You do this once per project.
+
+   	</TabItem>
+   	<TabItem label="Pi">
+
+   	```sh
+   	pi
+   	```
+
+   	The first time, Pi asks you to trust the project.
+
+   	</TabItem>
+   </Tabs>
+
+   Ask it for something small, such as a fix with a test.
+
+3. **Read the session.** In a second terminal, in the same folder:
+
+   ```sh
+   wisdom glance latest
+   ```
+
+   You get one entry per turn: your prompt, the start of the agent's reply, and what
+   happened (tool calls, failures, changed files). To read a turn in full:
+
+   ```sh
+   wisdom open t1 --capture latest
+   ```
+
+   This shows the turn in the order it happened: each tool call with its full input and
+   output, the reply, and every file change as a diff.
+
+4. **Open the dashboard.**
+
+   ```sh
+   wisdom dashboard
+   ```
+
+   It prints an address, `http://127.0.0.1:7435` by default. Open it in your browser to see
+   the session update while your agent works.
+
+   ![The dashboard overview: every session across Claude Code, Codex and Pi, with tokens and the most-changed files](../../../assets/screenshots/overview.webp)
+
+5. **Ask your agent about it.** The skill from step 1 lets any connected agent read past
+   sessions, including ones recorded from a different agent. Try:
+
+   > Read the last Wisdom session. What did it change, and did the tests pass?
+
+</Steps>
+
+<Aside title="Need a separate login per project?">
+`wisdom init` and `wisdom track claude` give each agent its own home inside `.wisdom/`. This
+also records sessions started from a subfolder. See [Record sessions](../../guides/record-sessions/).
+</Aside>
+
+## Next steps
+
+- [Read a session](../../guides/read-a-session/): positions like `t3/c2`, and what each label means.
+- [Hand off work](../../guides/hand-off-work/): continue in another agent that reads this session first.
+- [Share a session](../../guides/share-a-session/): send one to a teammate, after a secret check.
