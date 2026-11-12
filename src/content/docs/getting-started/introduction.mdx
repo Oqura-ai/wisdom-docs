@@ -6,6 +6,7 @@ sidebar:
   order: 1
 ---
 
+import { LinkCard } from '@astrojs/starlight/components';
 import Agents from '../../../components/Agents.astro';
 
 Wisdom records your coding agent's sessions on your own machine: what you asked, what the
@@ -16,6 +17,15 @@ skill, so the next agent starts from what actually happened.
 It works with:
 
 <Agents />
+
+```sh title="Terminal"
+npm install -g @oqura/wisdom    # Node.js 24 or newer
+cd your-project
+wisdom connect                  # then start your agent here as usual
+```
+
+That's the whole setup. [Quick start](../quick-start/) walks through it and reads your first
+session back.
 
 ## What you can do with it
 
@@ -42,9 +52,9 @@ More detail in [How it works](../../concepts/how-it-works/).
 
 ## Where to start
 
-- [Installation](../installation/): Node.js 24 and one npm command.
-- [Quick start](../quick-start/): record your first session and read it back, in about five minutes.
-- [Record sessions](../../guides/record-sessions/): the two ways to record, and which one to pick.
+<LinkCard title="Installation" description="Node.js 24 and one npm command." href="../installation/" />
+<LinkCard title="Quick start" description="Record your first session and read it back, in about five minutes." href="../quick-start/" />
+<LinkCard title="Record sessions" description="The two ways to record, and which one to pick." href="../../guides/record-sessions/" />
 
 For coding agents, these docs are also published as plain text:
 [`llms.txt`](/wisdom-docs/llms.txt) is the index, and

@@ -5,7 +5,7 @@ sidebar:
   order: 3
 ---
 
-import { Aside, Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, LinkCard, Steps, Tabs, TabItem } from '@astrojs/starlight/components';
 
 Record one session with your normal agent login, then read it back in the terminal, in the
 dashboard, and through your agent.
@@ -16,28 +16,24 @@ You need:
 - A project folder, ideally a git repository.
 - Claude Code, Codex or Pi.
 
-<details>
-<summary>Prefer to let your agent set it up? Copy this prompt.</summary>
+**Rather let your agent install and connect it?** Paste this into Claude Code, Codex or Pi,
+started in your project. When it's done, restart the agent there and go on from step 2.
 
-```txt title="Prompt"
+```txt title="Setup prompt" wrap
 Set up Wisdom (npm package @oqura/wisdom) in this project:
 1. Run `node --version`. If it is older than 24, stop and tell me.
 2. Install it globally: `npm install -g @oqura/wisdom`. Do not use npx.
    On Windows PowerShell, use `npm.cmd` and `wisdom.cmd`.
 3. In the project's top folder, run `wisdom connect` and show me its output.
-4. Run `wisdom doctor` and tell me about any problem it reports, with the fix it prints.
+4. Run `wisdom doctor` and tell me any problem it finds, with the fix it prints.
 Do not edit any other files.
 ```
 
-When it's done, quit the agent and start it again in the project's top folder, so the new
-session loads Wisdom's hook. Then carry on from step 2 below.
-</details>
-
 <Steps>
 
-1. **Connect your project.**
+1. ### Connect your project
 
-   ```sh
+   ```sh title="Terminal"
    cd your-project
    wisdom connect
    ```
@@ -45,20 +41,25 @@ session loads Wisdom's hook. Then carry on from step 2 below.
    Wisdom adds its hook and reading skill to the project's own agent settings, keeps those
    files out of git, and tells you how to start each agent:
 
-   ```txt
+   ```txt title="Output" wrap
    Wisdom is set up in /home/maya/invoice-api. Start your agent here as you always do, with your own login:
 
      Claude Code  claude   (start it in this folder, not a subfolder)
      Codex        codex    (trust this project if it asks, then review Wisdom's hooks once in /hooks)
      Pi           pi       (start it in this folder, and trust this project when it asks)
+
+   Wisdom added its hook and reading skill to: .claude/settings.local.json, .codex/hooks.json, .pi/settings.json, .claude/skills/wisdom-ledger, .agents/skills/wisdom-ledger.
+   They are listed in .git/info/exclude, so git ignores them and they never reach your teammates. wisdom disconnect removes them.
    ```
 
-2. **Use your agent as you always do,** from the project's top folder.
+2. ### Use your agent as usual
+
+   Start it from the project's top folder.
 
    <Tabs syncKey="agent">
    	<TabItem label="Claude Code">
 
-   	```sh
+   	```sh title="Terminal"
    	claude
    	```
 
@@ -68,7 +69,7 @@ session loads Wisdom's hook. Then carry on from step 2 below.
    	</TabItem>
    	<TabItem label="Codex">
 
-   	```sh
+   	```sh title="Terminal"
    	codex
    	```
 
@@ -78,7 +79,7 @@ session loads Wisdom's hook. Then carry on from step 2 below.
    	</TabItem>
    	<TabItem label="Pi">
 
-   	```sh
+   	```sh title="Terminal"
    	pi
    	```
 
@@ -89,25 +90,27 @@ session loads Wisdom's hook. Then carry on from step 2 below.
 
    Ask it for something small, such as a fix with a test.
 
-3. **Read the session.** In a second terminal, in the same folder:
+3. ### Read the session
 
-   ```sh
+   In a second terminal, in the same folder:
+
+   ```sh title="Terminal"
    wisdom glance latest
    ```
 
    You get one entry per turn: your prompt, the start of the agent's reply, and what
    happened (tool calls, failures, changed files). To read a turn in full:
 
-   ```sh
+   ```sh title="Terminal"
    wisdom open t1 --capture latest
    ```
 
    This shows the turn in the order it happened: each tool call with its full input and
    output, the reply, and every file change as a diff.
 
-4. **Open the dashboard.**
+4. ### Open the dashboard
 
-   ```sh
+   ```sh title="Terminal"
    wisdom dashboard
    ```
 
@@ -116,10 +119,14 @@ session loads Wisdom's hook. Then carry on from step 2 below.
 
    ![The dashboard overview: every session across Claude Code, Codex and Pi, with tokens and the most-changed files](../../../assets/screenshots/overview.webp)
 
-5. **Ask your agent about it.** The skill from step 1 lets any connected agent read past
-   sessions, including ones recorded from a different agent. Try:
+5. ### Ask your agent about it
 
-   > Read the last Wisdom session. What did it change, and did the tests pass?
+   The reading skill from step 1 lets any connected agent read past sessions, including ones
+   recorded from a different agent. Try:
+
+   ```txt title="Prompt" wrap
+   Read the last Wisdom session. What did it change, and did the tests pass?
+   ```
 
 </Steps>
 
@@ -130,6 +137,6 @@ also records sessions started from a subfolder. See [Record sessions](../../guid
 
 ## Next steps
 
-- [Read a session](../../guides/read-a-session/): positions like `t3/c2`, and what each label means.
-- [Hand off work](../../guides/hand-off-work/): continue in another agent that reads this session first.
-- [Share a session](../../guides/share-a-session/): send one to a teammate, after a secret check.
+<LinkCard title="Read a session" description="Positions like t3/c2, and what each label means." href="../../guides/read-a-session/" />
+<LinkCard title="Hand off work" description="Continue in another agent that reads this session first." href="../../guides/hand-off-work/" />
+<LinkCard title="Share a session" description="Send one to a teammate, after a secret check." href="../../guides/share-a-session/" />

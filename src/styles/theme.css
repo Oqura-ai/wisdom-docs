@@ -94,13 +94,13 @@
 }
 
 /* Links: strong text with an accent underline. */
-.sl-markdown-content a:not(:where(.not-content *)) {
+.sl-markdown-content a:not(:where(.not-content *, .sl-link-card *)) {
 	color: var(--sl-color-white);
 	font-weight: 600;
 	text-decoration: none;
 	border-bottom: 1px solid var(--sl-color-accent);
 }
-.sl-markdown-content a:hover:not(:where(.not-content *)) {
+.sl-markdown-content a:hover:not(:where(.not-content *, .sl-link-card *)) {
 	color: var(--sl-color-white);
 	border-bottom-width: 2px;
 }
@@ -303,6 +303,51 @@ starlight-tabs [role='tab'][aria-selected='true'] {
 }
 .expressive-code .frame {
 	box-shadow: none;
+}
+
+/* A code block's title is a quiet label ("Terminal", "Output"), not an editor tab. */
+.expressive-code .frame.has-title:not(.is-terminal) .header {
+	background: var(--sl-color-gray-7);
+	border-bottom: 1px solid var(--sl-color-gray-5);
+}
+:root[data-theme='dark'] .expressive-code .frame.has-title:not(.is-terminal) .header {
+	background: var(--sl-color-gray-6);
+}
+.expressive-code .frame.has-title:not(.is-terminal) .header .title {
+	background: none;
+	border: none;
+	padding-block: 0.4rem;
+	font-size: var(--sl-text-xs);
+	font-weight: 500;
+	letter-spacing: 0.02em;
+	color: var(--sl-color-gray-3);
+}
+.expressive-code .frame.has-title:not(.is-terminal) .header .title::after {
+	display: none;
+}
+
+/* Link cards: one per row, title without the link underline. */
+.sl-link-card {
+	border-radius: 0.75rem;
+	border-color: var(--sl-color-gray-5);
+	box-shadow: none;
+}
+.sl-link-card:hover {
+	border-color: var(--sl-color-gray-4);
+	background: var(--sl-color-gray-7);
+}
+:root[data-theme='dark'] .sl-link-card:hover {
+	background: var(--sl-color-gray-6);
+}
+.sl-link-card {
+	padding: 0.8rem 1.1rem;
+	row-gap: 0.15rem;
+}
+.sl-markdown-content .sl-link-card + .sl-link-card {
+	margin-top: 0.6rem;
+}
+.sl-link-card .title {
+	font-size: var(--sl-text-base);
 }
 
 /* Questions as expandable rows, one bordered group. */

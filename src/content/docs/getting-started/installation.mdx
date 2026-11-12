@@ -22,7 +22,7 @@ record.
 <Tabs syncKey="os">
 	<TabItem label="macOS / Linux">
 
-	```sh
+	```sh title="Terminal"
 	npm install -g @oqura/wisdom
 	wisdom --version
 	```
@@ -30,7 +30,7 @@ record.
 	</TabItem>
 	<TabItem label="Windows">
 
-	```powershell
+	```powershell title="Terminal"
 	npm install -g @oqura/wisdom
 	wisdom --version
 	```
@@ -47,7 +47,7 @@ cache folder that can disappear, and recording stops with it.
 
 ## Check a project
 
-```sh
+```sh title="Terminal"
 wisdom doctor
 ```
 
@@ -57,7 +57,7 @@ each problem it finds.
 
 ## Update
 
-```sh
+```sh title="Terminal"
 wisdom daemon stop                    # in each project
 npm install -g @oqura/wisdom@latest
 wisdom doctor
@@ -75,14 +75,14 @@ at the new copy.
 
 1. In each connected project, remove Wisdom's hooks and stop the service:
 
-   ```sh
+   ```sh title="Terminal"
    wisdom disconnect
    wisdom daemon stop
    ```
 
 2. Remove the package:
 
-   ```sh
+   ```sh title="Terminal"
    npm uninstall -g @oqura/wisdom
    ```
 

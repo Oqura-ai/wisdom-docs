@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 630" role="img" aria-labelledby="t d">
+  <title id="t">Glance, then open</title>
+  <desc id="d">wisdom glance latest shows a session as its turns (t1, t2, t3), subagents (a1) and changes outside any turn. wisdom open t2 shows turn 2 in order: the prompt, each tool call, the reply and the diffs. wisdom open t2/c3 shows one call whole: its status, full input and full output.</desc>
+  <style>
+  :root { --paper:#f6f8fb; --ink:#344d67; --soft:#6f87a1; --muted:#7a8da3; --line:#d8e1ec;
+          --surface:#fcfdff; --blue:#c6d9e8; --sage:#cfdfd1; --peach:#e8d2c5; --lilac:#d9d1e8; --sand:#e7dfc2; }
+  * { box-sizing:border-box; }
+  
+  svg { font-family:Arial,Helvetica,sans-serif; }
+  text { fill:var(--ink); }
+  .eyebrow { font-size:14px; letter-spacing:2.8px; fill:var(--muted); }
+  .name { font-size:22px; }
+  .serif { font-family:Georgia,'Times New Roman',serif; }
+  .head { font-size:25px; letter-spacing:-.5px; }
+  .mono { font-family:ui-monospace,'Cascadia Mono',Consolas,monospace; font-size:14px; fill:var(--soft); }
+  .small { font-size:15px; fill:var(--soft); }
+  .note { font-family:Georgia,'Times New Roman',serif; font-style:italic; font-size:18px; fill:var(--soft); }
+  .card { fill:var(--surface); stroke:#d1deea; stroke-width:1.5; filter:url(#depth); }
+  .wire { fill:none; stroke:#aec2d5; stroke-width:2; stroke-linecap:round; }
+  .local { fill:#eef3f8; fill-opacity:.55; stroke:#c4d3e3; stroke-width:1.5; stroke-dasharray:5 6; }
+  .tile { fill:#e1e9f3; stroke:#bacddd; }
+  .cell { stroke:none; }
+</style>
+  <defs>
+    <linearGradient id="paper" x2="1" y2="1"><stop stop-color="#fcfdff"/><stop offset="1" stop-color="#eef3f8"/></linearGradient>
+    <filter id="depth" x="-10%" y="-10%" width="120%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#405d7e" flood-opacity=".10"/>
+    </filter>
+    <marker id="tip" viewBox="0 0 10 10" refX="3" refY="5" markerWidth="10" markerHeight="10" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1 1 L9 5 L1 9 Z" fill="#9fb3c7" stroke="#9fb3c7" stroke-width="1.2" stroke-linejoin="round"/>
+    </marker>
+    <!-- The Wisdom bot face (from the banner), radius 22; fill comes from the circle drawn under it. -->
+    <clipPath id="fc"><circle cx="0" cy="0" r="22"/></clipPath>
+    <g id="face-detail">
+      <g clip-path="url(#fc)">
+        <ellipse cx="6.8" cy="15.8" rx="31.7" ry="18.1" transform="rotate(-25 6.8 15.8)" fill="#6a8da3" opacity=".17"/>
+        <ellipse cx="-18" cy="-9" rx="11.3" ry="27.2" transform="rotate(25 -18 -9)" fill="#fff" opacity=".27"/>
+      </g>
+      <circle r="22" fill="none" stroke="#9fb3c7" stroke-width="1.3"/>
+      <rect x="-8.6" y="-4.8" width="4.4" height="9.6" rx="2.4" fill="#344d67"/>
+      <rect x="4.3" y="-4.8" width="4.4" height="9.6" rx="2.4" fill="#344d67"/>
+    </g>
+  </defs>
+  <style>.eyebrow{font-size:15px}.mono{font-size:18px;fill:#5b7491}.small{font-size:20px;fill:#3f5873}.head{font-size:28px}.note{font-size:21px;fill:#5b7491}.addr{fill:#344d67}.pick{fill:#eef3f8;stroke:#c6d9e8;stroke-width:1.5}</style>
+  <rect x=".75" y=".75" width="1038.5" height="628.5" rx="24" fill="url(#paper)" stroke="#d4deea" stroke-width="1.5"/>
+
+  <text x="30" y="72" class="eyebrow">GLANCE</text>
+  <text x="380" y="72" class="eyebrow">OPEN A TURN</text>
+  <text x="730" y="72" class="eyebrow">OPEN A CALL</text>
+
+  <!-- Rows share one grid: baselines 226, 276, 326…; a highlight is centred 6 above its baseline. -->
+
+  <!-- Session -->
+  <g>
+    <rect x="30" y="100" width="290" height="370" rx="16" class="card"/>
+    <text x="52" y="144" class="serif head">Session</text>
+    <text x="52" y="172" class="mono">wisdom glance latest</text>
+    <rect x="40" y="249" width="270" height="42" rx="10" class="pick"/>
+    <text x="52" y="226" class="mono addr">t1</text><text x="144" y="226" class="small">add an endpoint</text>
+    <text x="52" y="276" class="mono addr">t2</text><text x="144" y="276" class="small">fix it, add a test</text>
+    <text x="52" y="326" class="mono addr">t3</text><text x="144" y="326" class="small">update the docs</text>
+    <line x1="52" y1="352" x2="298" y2="352" stroke="#e4ebf3" stroke-width="1.5"/>
+    <text x="52" y="388" class="mono addr">a1</text><text x="144" y="388" class="small">a subagent</text>
+    <text x="52" y="438" class="mono addr">outside</text><text x="144" y="438" class="small">other changes</text>
+  </g>
+
+  <!-- Turn -->
+  <g>
+    <rect x="380" y="100" width="290" height="408" rx="16" class="card"/>
+    <text x="402" y="144" class="serif head">Turn t2</text>
+    <text x="402" y="172" class="mono">wisdom open t2</text>
+    <rect x="390" y="349" width="270" height="42" rx="10" class="pick"/>
+    <text x="402" y="226" class="mono">in</text><text x="472" y="226" class="small">fix it, add a test</text>
+    <text x="402" y="276" class="mono addr">c1</text><text x="472" y="276" class="small">Edit → p1</text>
+    <text x="402" y="326" class="mono addr">c2</text><text x="472" y="326" class="small">Write → p2</text>
+    <text x="402" y="376" class="mono addr">c3</text><text x="472" y="376" class="small">Bash · failed</text>
+    <text x="402" y="426" class="mono">reply</text><text x="472" y="426" class="small">Totals fixed</text>
+    <text x="402" y="476" class="mono addr">p1 p2</text><text x="472" y="476" class="small">the diffs</text>
+  </g>
+
+  <!-- Call -->
+  <g>
+    <rect x="730" y="100" width="280" height="336" rx="16" class="card"/>
+    <text x="752" y="144" class="serif head">Call t2/c3</text>
+    <text x="752" y="172" class="mono">wisdom open t2/c3</text>
+    <line x1="752" y1="194" x2="988" y2="194" stroke="#e4ebf3" stroke-width="1.5"/>
+    <text x="752" y="228" class="small">Bash · failed · 1.8 s</text>
+    <text x="752" y="266" class="mono">input</text>
+    <text x="752" y="292" class="mono addr">npm test -- totals</text>
+    <text x="752" y="330" class="mono">output</text>
+    <text x="752" y="356" class="mono addr">✖ 1 test failed</text>
+    <text x="752" y="382" class="mono addr">expected 1204.37</text>
+    <text x="752" y="408" class="mono addr">received 1204.35</text>
+  </g>
+
+  <!-- Straight wires from the picked row into the next card, at the row's height -->
+  <path class="wire" d="M326 270 L370 270" style="stroke:#9fb3c7" marker-end="url(#tip)"/>
+  <path class="wire" d="M676 370 L720 370" style="stroke:#9fb3c7" marker-end="url(#tip)"/>
+
+  <line x1="507" y1="556" x2="533" y2="556" stroke="#b5c7d8"/>
+  <text x="520" y="592" class="note" text-anchor="middle">Glance for the shape. Open only what you need.</text>
+</svg>
