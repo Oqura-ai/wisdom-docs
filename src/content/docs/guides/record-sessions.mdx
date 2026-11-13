@@ -20,7 +20,7 @@ place. Most people only need the first.
 
 ## Connect: your normal login
 
-```sh
+```sh title="Terminal"
 cd your-project
 wisdom connect
 ```
@@ -59,7 +59,7 @@ recordings are kept.
 
 ## Track: a home of its own
 
-```sh
+```sh title="Terminal"
 wisdom init
 ```
 
@@ -71,7 +71,7 @@ once per project.
 <Tabs syncKey="agent">
 	<TabItem label="Claude Code">
 
-	```sh
+	```sh title="Terminal"
 	wisdom track claude
 	wisdom track claude -- --continue      # options after -- go to claude
 	```
@@ -81,7 +81,7 @@ once per project.
 
 	Codex runs a hook only after you review it. Do that once:
 
-	```sh
+	```sh title="Terminal"
 	wisdom track codex --setup-hooks       # open /hooks, trust Wisdom's hooks, quit
 	wisdom track codex
 	```
@@ -89,7 +89,7 @@ once per project.
 	</TabItem>
 	<TabItem label="Pi">
 
-	```sh
+	```sh title="Terminal"
 	wisdom track pi                        # run /login once inside Pi
 	```
 

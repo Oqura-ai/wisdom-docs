@@ -12,7 +12,7 @@ change Node versions, start here.
 
 ## Check
 
-```sh
+```sh title="Terminal"
 wisdom doctor
 ```
 
@@ -33,7 +33,7 @@ Hooks store the full path of the installed Wisdom. They break when that path cha
 the install, or switched Node versions with nvm. Your agent keeps working either way; only live
 recording stops.
 
-```sh
+```sh title="Terminal"
 wisdom connect      # a connected project
 wisdom init         # a tracked project
 ```
@@ -45,7 +45,7 @@ it changes first, so you can restore it. Codex asks you to approve changed hooks
 
 It starts by itself when a hook or command needs it, and keeps running after your agent exits.
 
-```sh
+```sh title="Terminal"
 wisdom daemon status
 wisdom daemon stop        # the next hook starts it again
 wisdom daemon start

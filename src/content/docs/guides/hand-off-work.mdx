@@ -19,7 +19,7 @@ three ways to carry the work on:
 
 ## Handoff
 
-```sh
+```sh title="Terminal"
 wisdom handoff codex
 ```
 
@@ -38,10 +38,15 @@ and tells Codex to read it with `glance` and `open` before changing anything.
 
 Nothing is summarized or pasted in. The new agent reads the record itself, as much as it needs.
 
-```sh
-wisdom handoff pi --from 0f3c8a1e-…           # name the session to read (full ID)
-wisdom handoff codex -- also run the tests    # add your own words to the first prompt
-wisdom handoff 0f3c8a1e-… --from 01a1aca0-…   # an existing session reads another one
+```sh title="Terminal"
+# name the session to read (full ID)
+wisdom handoff pi --from 0f3c8a1e-…
+
+# add your own words to the first prompt
+wisdom handoff codex -- also run the tests
+
+# an existing session reads another one
+wisdom handoff 0f3c8a1e-… --from 01a1aca0-…
 ```
 
 Both sessions show the link. A glance of the new one says `continues <id> (<harness>)`; an
@@ -54,7 +59,7 @@ prompt for you to paste instead.
 
 ## Resume
 
-```sh
+```sh title="Terminal"
 wisdom resume 0f3c8a1e-77b2-4c10-9a5e-2d81c6f04b3a
 ```
 
@@ -65,7 +70,7 @@ observed.
 
 ## Clone
 
-```sh
+```sh title="Terminal"
 wisdom clone 0f3c8a1e
 ```
 

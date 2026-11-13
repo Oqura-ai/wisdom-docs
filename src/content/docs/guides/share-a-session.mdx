@@ -23,7 +23,7 @@ each one checks for secrets first.
 
 ## Share
 
-```sh
+```sh title="Terminal"
 wisdom share 0f3c8a1e
 wisdom share 0f3c8a1e 01a1aca0 --out a.wisdom-share
 ```
@@ -37,7 +37,7 @@ Before writing anything, Wisdom lists every value that looks like a secret (API 
 private keys, `PASSWORD=` and similar) or a personal detail such as an email address, masked,
 with where it appears:
 
-```txt frame="terminal"
+```txt title="Output" wrap
 Found 2 possible secrets:
   1  openai-key         sk-pro…3456       t1 · Bash output  (and 2 other places)
   2  secret-assignment  hu…               t1 · patch of notes.txt
@@ -59,7 +59,7 @@ The check finds the shapes it knows and will miss others. Look through what you 
 
 ## Import
 
-```sh
+```sh title="Terminal"
 wisdom import 0f3c8a1e-20261106-1402.wisdom-share
 ```
 
@@ -67,7 +67,7 @@ Or drop the file into `.wisdom/shared/`, and the service imports it within a few
 It's kept as its own read-only copy, never mixed into your recordings, and listed under
 "shared with you":
 
-```txt frame="terminal"
+```txt title="Output" wrap
 shared with you · 1, read-only
 
 0f3c8a1e-…  claude-code  2026-11-06 10:00Z  3 turns  from shop-api, shared 2026-11-06 14:02Z
@@ -78,7 +78,7 @@ Read it like any session. You can't resume someone else's recording, but you can
 
 ## Export as Markdown
 
-```sh
+```sh title="Terminal"
 wisdom export 0f3c8a1e --out session.md
 wisdom export 0f3c8a1e --redact --out -      # print it, to paste
 ```

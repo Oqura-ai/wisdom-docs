@@ -305,6 +305,13 @@ starlight-tabs [role='tab'][aria-selected='true'] {
 	box-shadow: none;
 }
 
+/* Show code as typed: no font ligatures turning -< or -> into arrows. */
+.expressive-code pre,
+.sl-markdown-content code {
+	font-variant-ligatures: none;
+	font-feature-settings: 'calt' 0, 'liga' 0;
+}
+
 /* A code block's title is a quiet label ("Terminal", "Output"), not an editor tab. */
 .expressive-code .frame.has-title:not(.is-terminal) .header {
 	background: var(--sl-color-gray-7);

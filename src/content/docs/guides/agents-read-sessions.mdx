@@ -15,7 +15,7 @@ session, so Codex can read what Claude Code did, and the other way round.
 `wisdom connect` and `wisdom init` give each agent a skill that teaches it to run these in its
 shell:
 
-```sh
+```sh title="Terminal"
 wisdom glance                    # recorded sessions, newest first
 wisdom glance latest             # one session: its shape and every turn
 wisdom open t3 --capture latest  # turn 3, whole
@@ -34,7 +34,7 @@ Ask in plain words. The agent finds the session and the turn on its own.
 
 Here an agent checks a change against the request behind it:
 
-```txt frame="terminal"
+```txt title="Output" wrap
 t3  in        Add a one-line docstring to main() in jev_router/tool.py.
 
 c4  Edit src/optim_jev/tools/jev_router/tool.py · ok · → p1
@@ -68,7 +68,7 @@ To add it to another agent:
 <Tabs syncKey="os">
 	<TabItem label="macOS / Linux">
 
-	```json
+	```json title="MCP settings"
 	{
 	  "mcpServers": {
 	    "wisdom": {
@@ -82,7 +82,7 @@ To add it to another agent:
 	</TabItem>
 	<TabItem label="Windows">
 
-	```json
+	```json title="MCP settings"
 	{
 	  "mcpServers": {
 	    "wisdom": {

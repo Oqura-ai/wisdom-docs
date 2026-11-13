@@ -10,7 +10,7 @@ import { Aside } from '@astrojs/starlight/components';
 Reading a session takes two moves: **glance** to see its shape, then **open** the part that
 matters. Your agents use the same two moves, through their skill.
 
-```sh
+```sh title="Terminal"
 wisdom glance                          # every recorded session, newest first
 wisdom glance latest                   # one session: its shape and every turn
 wisdom open t2 --capture latest        # turn 2, whole
@@ -42,7 +42,7 @@ call to see them.
 A turn comes back in recorded order: thinking, each call with its result, the reply, and then
 all the turn's file changes together, as diffs. An example:
 
-```ansi frame="terminal" title="~/invoice-api"
+```ansi frame="terminal" title="~/invoice-api" wrap
 [32m❯[39m [1mwisdom open t2 --capture latest[22m
 [1m[36mt2 · [39m[22m[2msession 3f9c2a71 · version 412 · 168,204 tokens[22m
 [2min[22m        [1mfix it and add a test[22m
@@ -96,7 +96,7 @@ changed.
 Piped to a file or another program, or with `--plain`, you get the exact text your agents
 read: uncoloured and unfolded.
 
-```sh
+```sh title="Terminal"
 wisdom open t2 --capture latest --plain > turn.txt
 ```
 

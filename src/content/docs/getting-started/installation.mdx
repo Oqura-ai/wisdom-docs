@@ -5,7 +5,7 @@ sidebar:
   order: 2
 ---
 
-import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
 
 Wisdom is one npm package. Install it once per machine, then connect each project you want to
 record.
@@ -19,26 +19,13 @@ record.
 
 ## Install
 
-<Tabs syncKey="os">
-	<TabItem label="macOS / Linux">
+```sh title="Terminal"
+npm install -g @oqura/wisdom
+wisdom --version
+```
 
-	```sh title="Terminal"
-	npm install -g @oqura/wisdom
-	wisdom --version
-	```
-
-	</TabItem>
-	<TabItem label="Windows">
-
-	```powershell title="Terminal"
-	npm install -g @oqura/wisdom
-	wisdom --version
-	```
-
-	If PowerShell blocks scripts, use `npm.cmd` and `wisdom.cmd` in their place.
-
-	</TabItem>
-</Tabs>
+The same commands work on macOS, Linux and Windows. If Windows PowerShell blocks scripts,
+use `npm.cmd` and `wisdom.cmd` in their place.
 
 <Aside type="caution" title="Install globally, not with npx">
 Each project's hooks store the path to the installed copy of Wisdom. An `npx` copy lives in a
