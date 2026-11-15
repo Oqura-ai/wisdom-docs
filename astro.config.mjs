@@ -30,6 +30,7 @@ export default defineConfig({
 						'- Install: `npm install -g @oqura/wisdom` (Node.js 24 or newer). Then run `wisdom connect` in a project and start the agent as usual.',
 						"- Recordings stay in the project's `.wisdom/` folder, unredacted. Nothing is uploaded and no model summarizes them.",
 						'- To read a recorded session, run `wisdom glance` to list sessions and `wisdom open <position> --capture <session>` to read one turn in full.',
+						'- To find which recorded step made each part of a git commit, run `wisdom glance --commit <commit>` (0.6.0 and newer).',
 					].join('\n'),
 				}),
 			],

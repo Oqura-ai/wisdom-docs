@@ -2,7 +2,7 @@
 title: Keep it healthy
 description: Check, repair, run the background service, and clean up old sessions.
 sidebar:
-  order: 7
+  order: 9
 ---
 
 import { Aside } from '@astrojs/starlight/components';
@@ -68,6 +68,25 @@ resume it.
 Deleting can't be undone, and Wisdom never deletes on a schedule. A session still recording
 can't be deleted until it ends.
 </Aside>
+
+## Commit guides
+
+Each commit's record and guide are made by a background job after the commit. It writes one
+line to `.wisdom/jobs.log` when it ends:
+
+```txt title=".wisdom/jobs.log" wrap
+2026-11-11T09:41:02.118Z a4c91e2b7f30 job · record kept · guide by claude-haiku-5-5 via Claude Code, reading the sessions' windows, check passed, writer 38.4 s, $0.0031 · 40 s
+```
+
+A job that died is started again, up to three times; after that your next `git push` or
+`wisdom guide <commit>` finishes it. When that's more than two minutes after the commit, the
+record says `record kept later`.
+
+| You see | What to do |
+| --- | --- |
+| `guide · none: no guide writer: Claude Code is not installed and wisdom-team.json names no guides.command` | Install and log in to Claude Code, or use `wisdom guide off` for the plain guide. |
+| `guide · none: the guide writer failed: …` | The writer's own error follows. `wisdom guide <commit>` tries again. |
+| `No guide written: the guide must read session …, which is no longer recorded here` | That session was deleted, so a model guide can't be written. Outside team mode, `glance --commit` still shows the plain guide. |
 
 ## Move or back up a project
 

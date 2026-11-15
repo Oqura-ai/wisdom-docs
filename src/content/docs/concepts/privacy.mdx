@@ -14,7 +14,8 @@ This page covers where they live and how to keep them private.
 
 Recordings live in the project's `.wisdom/` folder. The background service and the dashboard
 listen only on `127.0.0.1`, and every request needs a token stored in `.wisdom/daemon.json`.
-Nothing is uploaded, and no model reads your sessions.
+By default, nothing is uploaded and no model reads your sessions. The two exceptions below,
+commit guides and team mode, are both ones you turn on.
 
 ## What's in `.wisdom/`
 
@@ -34,10 +35,24 @@ A recording leaves your machine only when you run one of these:
 | --- | --- | --- |
 | `wisdom share` | One file for a teammate, with no logins | Yes |
 | `wisdom export` | A Markdown document | Yes |
+| `git push`, in [team mode](../../guides/share-with-your-team/) | Sessions and commit records, to your own git remote | Yes, redacted without asking |
 
-The check lists each value that looks like a key, token, password or email address, and you
-choose to redact it, keep it, or cancel. Redaction changes only the file you send, never your
+The check lists each value that looks like a key, token, password or email address. With
+`share` and `export` you choose to redact it, keep it, or cancel; a team-mode push redacts all
+of them, since nobody is there to answer. Redaction changes only what leaves, never your
 recording. See [Share a session](../../guides/share-a-session/).
+
+Commit records are kept in your own `.git` and a normal `git push` never sends them, outside
+team mode or in it. `git push --mirror` sends every ref, so it sends them too.
+
+## Commit guides
+
+A model writes a [commit guide](../../guides/read-a-commit/#guides) only when you ask:
+`wisdom guide <commit>`, `wisdom guide on`, or team mode, where it's on unless you run
+`wisdom guide off`. The default writer reads the commit's sessions through your own Claude
+Code login, so that text goes to the model's provider, as in any Claude Code session. A team
+that sets its own `guides.command` sends it wherever that command does. The plain guide uses
+no model.
 
 ## Your global settings
 

@@ -11,7 +11,7 @@ Wisdom has three parts: hooks inside your agent, a background service on your ma
 readers (the CLI, the dashboard and your agents' skill). This page follows one event through
 them.
 
-![How Wisdom works: Claude Code and Codex send events through hooks, and Pi through an extension, to a local daemon on 127.0.0.1 that never blocks the agent. It saves them in the project's .wisdom folder: SQLite, diffs and transcript copies. The dashboard, the CLI (glance, open) and the agent skill read it.](../../../assets/how-it-works.svg)
+![How Wisdom works: Claude Code and Codex send events through hooks, and Pi through an extension, to a local daemon on 127.0.0.1 that never blocks the agent. It saves them in the project's .wisdom folder: SQLite, diffs and transcript copies. At each commit, Wisdom keeps a record in your repository's .git that links each change to the step that made it. The dashboard, the CLI (glance, open, glance --commit) and the agent skill read it. In team mode, which is opt-in, git push sends records and sessions to your own git remote for teammates and CI.](../../../assets/how-it-works.svg)
 
 ## One event's path
 
@@ -54,7 +54,20 @@ Wisdom sees when a file changed, not who changed it:
 - `external-or-unknown`: no tool was running. You, your editor, or another process.
 
 Two agents working in one folder see each other's changes. Wisdom labels them honestly, but
-can't tell them apart.
+can't always tell them apart. When you [read a commit](../../guides/read-a-commit/), each
+change goes to the session whose own tool call named the file or held its text; when none did,
+every session that saw it is listed.
+
+## From sessions to commits
+
+When you commit, Wisdom matches each change in the commit to the recorded step that produced
+those exact file contents, and keeps the answer as a record in your repository's `.git`, under
+`refs/wisdom/records/`. It's never on a branch, and a normal push doesn't send it. See
+[Read a commit](../../guides/read-a-commit/).
+
+In [team mode](../../guides/share-with-your-team/), which you turn on per repository, your
+`git push` also sends these records and the sessions they name to your own git remote, with
+secrets redacted. Teammates and CI read them from there.
 
 ## Reads that hold still
 

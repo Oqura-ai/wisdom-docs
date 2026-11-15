@@ -46,6 +46,13 @@ usually works, but an agent can change its transcript format.
 - Recorded through an extension. Inside Pi, `/wisdom-status` reports the session.
 - In a tracked home, Wisdom chooses where Pi stores sessions, so `--session-dir` is refused.
 
+## Commit guides
+
+[Reading a commit](../../guides/read-a-commit/) works the same for all three. The model that
+writes guides runs through Claude Code, whichever agent did the work. Without Claude Code
+installed and logged in, use the plain guide (`wisdom guide off`), or name another writer in
+[`guides.command`](../files-and-config/#wisdom-teamjson).
+
 ## Finding the agent
 
 Wisdom finds `claude`, `codex` and `pi` on your `PATH`, as your shell does. On Windows it

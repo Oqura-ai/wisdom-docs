@@ -1,6 +1,6 @@
 ---
 title: Files & config
-description: The .wisdom/ folder, .wisdomignore, environment variables and ports.
+description: The .wisdom/ folder, Wisdom's git refs, wisdom-team.json, .wisdomignore, environment variables and ports.
 sidebar:
   order: 4
 ---
@@ -20,6 +20,11 @@ deleted.json                  hashes that keep deleted sessions out
 backups/<time>/               files a dashboard repair changed, as they were
 shared/                       sessions imported from teammates, read-only
 shared-out/                   files written by share and export
+config.json                   your guide setting, from wisdom guide on|off
+recorder.json                 a random ID that names your sessions in team mode
+jobs/                         a commit's record and guide job, while it runs
+jobs.log                      one line per commit job: guide writer, seconds, cost
+team-imports.json             teammates' sessions fetched by wisdom team fetch
 harnesses/<agent>/home/       a tracked agent's home: settings, login, sessions
 harnesses/<agent>/<session-id>/
   native-session.jsonl        the agent's transcript, byte for byte
@@ -30,6 +35,49 @@ harnesses/<agent>/<session-id>/
 To back it up, stop the service first (`wisdom daemon stop`) and copy the whole folder. Never
 copy `ledger.sqlite` alone while it runs.
 
+## Inside `.git`
+
+Commit records live in your repository as hidden refs. They're never on a branch, never checked
+out, and a normal `git push` or `git clone` doesn't carry them.
+
+```txt title="refs/wisdom/"
+records/<commit>              a commit's record and guide
+sessions/<recorder>/<session> your pushed sessions, one version per push (team mode)
+deleted                       the team's deletion list (team mode)
+```
+
+In team mode, the remote holds the same under `refs/wisdom/<repo-id>/`. `git push --mirror`
+sends every ref, these included. See [Read a commit](../../guides/read-a-commit/) and
+[Share with your team](../../guides/share-with-your-team/).
+
+## `wisdom-team.json`
+
+A committed `wisdom-team.json` at the top of the repository turns on team mode.
+`wisdom team init` writes it:
+
+```json title="wisdom-team.json"
+{
+  "version": 1,
+  "repoId": "5d0c3c1e-8a5b-4b8e-9d0e-2f1c7a3b9e11",
+  "remote": "origin",
+  "identity": true,
+  "requireGuides": true,
+  "keepReferenced": true
+}
+```
+
+| Field | Default | What it does |
+| --- | --- | --- |
+| `repoId` | made by `team init` | Names this repository's refs on the remote, so one remote can hold several repositories' sessions. |
+| `remote` | `origin` | Where sessions and records go. `--remote NAME` overrides it for one command. |
+| `identity` | `true` | Each pushed session carries the recorder's git name and email, labelled "git config". |
+| `requireGuides` | `true` | `wisdom check` fails a commit with agent work and no guide that passed Wisdom's check. |
+| `retentionDays` | none | `wisdom team prune` removes pushed sessions older than this. |
+| `keepReferenced` | `true` | `prune` keeps sessions a pushed commit record still names. |
+| `check` | none | Your own command, run on each session file before it's pushed, with the file's path last. It may change the file; a non-zero exit keeps that session home, and it's tried again at the next push. |
+| `guides.model` | `claude-haiku-5-5` | The model that writes guides. |
+| `guides.command` | Claude Code | Any other writer. It reads the prompt on stdin, prints the guide, and finds the model in `WISDOM_GUIDE_MODEL`. It gets the cited steps already opened and can't read further. |
+
 ## `.wisdomignore`
 
 Files Wisdom shouldn't diff, one relative path or folder per line, `#` for comments. No globs,
@@ -38,3 +86,35 @@ no negation.
 ```txt title=".wisdomignore"
 src/generated/
 fixtures/large-dump.json
+```
+
+Always skipped: `.git`, `.wisdom`, `node_modules`, `dist`, `build`, `.next`, `.venv`,
+`__pycache__`, `.npm-cache`, and symlinks.
+
+## Environment variables
+
+| Variable | What it does |
+| --- | --- |
+| `WISDOM_DATA_DIR` | Use this data folder, the same as `--data`. |
+| `NO_COLOR` | Print `glance` and `open` without colour, as with `--plain`. |
+
+## Ports
+
+| Port | Used by |
+| --- | --- |
+| `127.0.0.1:7434` | The background service |
+| `127.0.0.1:7435` | The dashboard |
+
+When another project's service holds them, Wisdom takes the next free pair (7436 and 7437,
+and so on). `wisdom daemon start --port N` asks for one port exactly. Both listen only on your
+own machine.
+
+## Limits
+
+| Limit | Value |
+| --- | --- |
+| One `glance` or `open` answer | 80,000 characters, then `limited` with a way to continue |
+| A single line | 2,000 characters, then split, marked `⤷` |
+| A file Wisdom diffs | 1 MiB |
+| Files watched in a project | 10,000, and 64 MiB in total |
+| Idle time before a session closes | 10 minutes |

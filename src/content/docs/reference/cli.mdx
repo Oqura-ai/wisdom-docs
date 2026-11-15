@@ -35,7 +35,31 @@ Windows PowerShell with scripts blocked, type `wisdom.cmd`.
 | `wisdom glance` | List recorded sessions, newest first. |
 | `wisdom glance <session>` | One session's shape and every turn. |
 | `wisdom open <position> --capture <session>` | One turn, tool call or subagent, whole. |
+| `wisdom glance --commit <commit>` | Which recorded steps made each piece of a commit (a hash, a branch or `HEAD`). |
 | `wisdom dashboard` | Print the address of the live dashboard. |
+
+## Commit guides
+
+New in 0.6.0. See [Read a commit](../../guides/read-a-commit/).
+
+| Command | What it does |
+| --- | --- |
+| `wisdom guide <commit>` | Have a model write that commit's guide now, and keep it in the commit's record. |
+| `wisdom guide on\|off` | Whether a model writes a guide after each of your commits. Off by default; on by default in team mode. |
+
+## Team mode
+
+New in 0.6.0. See [Share with your team](../../guides/share-with-your-team/).
+
+| Command | What it does |
+| --- | --- |
+| `wisdom team init` | Write `wisdom-team.json`. Commit it to turn team mode on. |
+| `wisdom team hooks on\|off` | Install or remove Wisdom's three git hooks. `connect` and `init` install them in a team-mode repository. |
+| `wisdom team push` | Send your sessions and commit records now, without a `git push`. |
+| `wisdom team fetch` | Bring teammates' sessions here, read-only, and apply the deletion list. |
+| `wisdom team delete <session>` | Remove a pushed session for everyone. Your own recording is kept. |
+| `wisdom team prune` | Remove pushed sessions older than `retentionDays`. |
+| `wisdom check --range <base>..<head>` | For CI: check each commit's guide, and that its sessions are on the remote. Exits with 1 when a commit needs attention. |
 
 ## Share a session
 
@@ -64,6 +88,9 @@ Windows PowerShell with scripts blocked, type `wisdom.cmd`.
 | `--from N` | `glance`, `open` | Continue a long answer from line `N`. |
 | `--at VERSION` | `glance`, `open` | Read at a fixed version. |
 | `--plain` | `glance`, `open` | In a terminal, print the exact text agents read. |
+| `--commit <commit>` | `glance` | Read a git commit instead of a session. |
+| `--range <base>..<head>` | `check` | The commits to check, as git names a range. |
+| `--remote NAME` | `team`, `check` | Use this remote instead of the one in `wisdom-team.json`. |
 | `--from <session-id>` | `handoff` | The session to read. Default: the newest from another agent. |
 | `--port N` | `daemon` | Use exactly this port. |
 | `--no-dashboard` | `daemon` | Don't start the dashboard. |

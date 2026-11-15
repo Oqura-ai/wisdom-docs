@@ -12,8 +12,9 @@ something, it marks the gap in place.
 
 1. Records are only added. Transcripts are copied byte for byte.
    Nothing is edited later, except when you delete a session.
-2. Nothing is summarized or generated. What you read is what
-   happened.
+2. Recordings are never summarized or generated. What you read is what happened. The one
+   thing a model writes is a [commit guide](../../guides/read-a-commit/#guides), only when
+   you ask for one or turn on team mode, and it's always labelled `derived, not evidence`.
 3. A gap is listed as `not recorded`, with the reason.
 4. Labels state only what was observed. A change seen during a tool call is timing, not
    authorship, and a tool that finished is not proof the code is right.
@@ -30,6 +31,7 @@ something, it marks the gap in place.
 | Subagents | Their task, calls, changes and report |
 | Tokens and cost | As the agent reports them |
 | The agent's transcript | A byte-for-byte copy |
+| Your commits | A record in your repository's `.git` linking each change to the step that made it ([new in 0.6.0](../../guides/read-a-commit/)) |
 
 ## Not seen
 

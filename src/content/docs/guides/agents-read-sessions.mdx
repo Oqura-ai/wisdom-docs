@@ -2,7 +2,7 @@
 title: Let agents read sessions
 description: The skill every connected agent gets, what to ask it, and the optional MCP tool.
 sidebar:
-  order: 3
+  order: 4
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -31,6 +31,10 @@ Ask in plain words. The agent finds the session and the turn on its own.
 - *Which session changed `src/totals.ts`, and was that on purpose?*
 - *Read the last Wisdom session. Did the tests pass before it said they did?*
 - *What did the Claude Code session try before it settled on this fix?*
+- *Which session wrote the last commit, and did it do what I asked?*
+
+For the last one, the skill uses [`wisdom glance --commit`](../read-a-commit/). It also tells
+your agents not to run `wisdom guide` unless you ask, since that calls a model on your account.
 
 Here an agent checks a change against the request behind it:
 

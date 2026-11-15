@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 620" role="img" aria-labelledby="t d">
+  <title id="t">From a commit to its steps</title>
+  <desc id="d">Commit a4c91e2 changed three files. The change to src/totals.ts was written by steps c1 and c4 of turn t2, and the new test file by step c2. The two test runs, c3 and c5, changed no file. The README edit has no recorded step, so it is marked not recorded.</desc>
+  <style>
+  :root { --paper:#f6f8fb; --ink:#344d67; --soft:#6f87a1; --muted:#7a8da3; --line:#d8e1ec;
+          --surface:#fcfdff; --blue:#c6d9e8; --sage:#cfdfd1; --peach:#e8d2c5; --lilac:#d9d1e8; --sand:#e7dfc2; }
+  * { box-sizing:border-box; }
+  
+  svg { font-family:Arial,Helvetica,sans-serif; }
+  text { fill:var(--ink); }
+  .eyebrow { font-size:14px; letter-spacing:2.8px; fill:var(--muted); }
+  .name { font-size:22px; }
+  .serif { font-family:Georgia,'Times New Roman',serif; }
+  .head { font-size:25px; letter-spacing:-.5px; }
+  .mono { font-family:ui-monospace,'Cascadia Mono',Consolas,monospace; font-size:14px; fill:var(--soft); }
+  .small { font-size:15px; fill:var(--soft); }
+  .note { font-family:Georgia,'Times New Roman',serif; font-style:italic; font-size:18px; fill:var(--soft); }
+  .card { fill:var(--surface); stroke:#d1deea; stroke-width:1.5; filter:url(#depth); }
+  .wire { fill:none; stroke:#aec2d5; stroke-width:2; stroke-linecap:round; }
+  .local { fill:#eef3f8; fill-opacity:.55; stroke:#c4d3e3; stroke-width:1.5; stroke-dasharray:5 6; }
+  .tile { fill:#e1e9f3; stroke:#bacddd; }
+  .cell { stroke:none; }
+</style>
+  <defs>
+    <linearGradient id="paper" x2="1" y2="1"><stop stop-color="#fcfdff"/><stop offset="1" stop-color="#eef3f8"/></linearGradient>
+    <filter id="depth" x="-10%" y="-10%" width="120%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#405d7e" flood-opacity=".10"/>
+    </filter>
+    <marker id="tip" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M3 2 L10 6 L3 10" fill="none" stroke="#8fa8bf" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <!-- The Wisdom bot face (from the banner), radius 22; fill comes from the circle drawn under it. -->
+    <clipPath id="fc"><circle cx="0" cy="0" r="22"/></clipPath>
+    <g id="face-detail">
+      <g clip-path="url(#fc)">
+        <ellipse cx="6.8" cy="15.8" rx="31.7" ry="18.1" transform="rotate(-25 6.8 15.8)" fill="#6a8da3" opacity=".17"/>
+        <ellipse cx="-18" cy="-9" rx="11.3" ry="27.2" transform="rotate(25 -18 -9)" fill="#fff" opacity=".27"/>
+      </g>
+      <circle r="22" fill="none" stroke="#9fb3c7" stroke-width="1.3"/>
+      <rect x="-8.6" y="-4.8" width="4.4" height="9.6" rx="2.4" fill="#344d67"/>
+      <rect x="4.3" y="-4.8" width="4.4" height="9.6" rx="2.4" fill="#344d67"/>
+    </g>
+  </defs>
+  <style>.eyebrow{font-size:15px}.mono{font-size:18px;fill:#5b7491}.small{font-size:20px;fill:#3f5873}.head{font-size:28px}.note{font-size:21px;fill:#5b7491}.addr{fill:#344d67}.pick{fill:#eef3f8;stroke:#c6d9e8;stroke-width:1.5}.dim{fill:#8496aa}.gap{fill:none;stroke:#c4d3e3;stroke-width:1.5;stroke-dasharray:5 6}</style>
+  <rect x=".75" y=".75" width="1038.5" height="618.5" rx="24" fill="url(#paper)" stroke="#d4deea" stroke-width="1.5"/>
+
+  <text x="30" y="72" class="eyebrow">GIT COMMIT</text>
+  <text x="600" y="72" class="eyebrow">RECORDED SESSION</text>
+
+  <!-- Rows on both cards share one grid: baselines 230, 280, 330…; a highlight is 42 tall, 27 above its baseline. -->
+  <!-- The commit -->
+  <g>
+    <rect x="30" y="100" width="450" height="324" rx="16" class="card"/>
+    <text x="52" y="144" class="serif head">Commit a4c91e2</text>
+    <text x="52" y="172" class="mono">fix: round invoice totals once</text>
+    <line x1="52" y1="194" x2="458" y2="194" stroke="#e4ebf3" stroke-width="1.5"/>
+    <text x="52" y="230" class="small">3 files changed</text>
+    <rect x="40" y="253" width="430" height="42" rx="10" class="pick"/>
+    <rect x="40" y="303" width="430" height="42" rx="10" class="pick"/>
+    <text x="52" y="280" class="mono addr">src/totals.ts</text><text x="300" y="280" class="mono">+2 −1</text>
+    <text x="52" y="330" class="mono addr">test/totals.test.ts</text><text x="300" y="330" class="mono">new file</text>
+    <line x1="52" y1="352" x2="458" y2="352" stroke="#e4ebf3" stroke-width="1.5"/>
+    <rect x="40" y="361" width="430" height="42" rx="10" class="gap"/>
+    <text x="52" y="388" class="mono addr">README.md</text><text x="300" y="388" class="mono">not recorded</text>
+  </g>
+
+  <!-- The turn -->
+  <g>
+    <rect x="600" y="100" width="410" height="408" rx="16" class="card"/>
+    <text x="622" y="144" class="serif head">Turn t2</text>
+    <text x="622" y="172" class="mono">session 3f9c2a71 · claude-code</text>
+    <line x1="622" y1="194" x2="988" y2="194" stroke="#e4ebf3" stroke-width="1.5"/>
+    <rect x="610" y="253" width="390" height="42" rx="10" class="pick"/>
+    <rect x="610" y="303" width="390" height="42" rx="10" class="pick"/>
+    <rect x="610" y="403" width="390" height="42" rx="10" class="pick"/>
+    <text x="622" y="230" class="mono">in</text><text x="672" y="230" class="small">fix it and add a test</text>
+    <text x="622" y="280" class="mono addr">c1</text><text x="672" y="280" class="small">Edit</text><text x="742" y="280" class="mono addr">src/totals.ts</text>
+    <text x="622" y="330" class="mono addr">c2</text><text x="672" y="330" class="small">Write</text><text x="742" y="330" class="mono addr">test/totals.test.ts</text>
+    <text x="622" y="380" class="mono dim">c3</text><text x="672" y="380" class="small dim">Bash</text><text x="742" y="380" class="mono dim">npm test · failed</text>
+    <text x="622" y="430" class="mono addr">c4</text><text x="672" y="430" class="small">Edit</text><text x="742" y="430" class="mono addr">src/totals.ts</text>
+    <text x="622" y="480" class="mono dim">c5</text><text x="672" y="480" class="small dim">Bash</text><text x="742" y="480" class="mono dim">npm test · ok</text>
+  </g>
+
+  <!-- Wires run row to row: a dot on the piece's row edge (470), the chevron point on the step's row edge (610). -->
+  <text x="540" y="262" class="mono" text-anchor="middle">made by</text>
+  <path class="wire" d="M470 274 L608 274" marker-end="url(#tip)"/>
+  <path class="wire" d="M470 274 C540 274 540 424 608 424" marker-end="url(#tip)"/>
+  <path class="wire" d="M470 324 L608 324" marker-end="url(#tip)"/>
+  <circle cx="470" cy="274" r="4" fill="#8fa8bf"/>
+  <circle cx="470" cy="324" r="4" fill="#8fa8bf"/>
+
+  <line x1="507" y1="550" x2="533" y2="550" stroke="#b5c7d8"/>
+  <text x="520" y="586" class="note" text-anchor="middle">Each change points to the step that wrote it. The README edit has none.</text>
+</svg>

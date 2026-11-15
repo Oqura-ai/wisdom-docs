@@ -2,14 +2,15 @@
 title: Share a session
 description: Send a session to a teammate, read one you received, or export one as Markdown.
 sidebar:
-  order: 5
+  order: 6
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 import Flow from '../../../components/Flow.astro';
 
-Recordings never leave your machine on their own. These commands are the only way out, and
-each one checks for secrets first.
+Recordings never leave your machine on their own. These commands send one session by hand,
+and each one checks for secrets first. To share with every push instead, see
+[Share with your team](../share-with-your-team/).
 
 <Flow
 	label="wisdom share checks for secrets and writes one file; you send it; your teammate runs wisdom import and reads it read-only."

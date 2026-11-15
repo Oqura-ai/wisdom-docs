@@ -32,14 +32,17 @@ session back.
 - Review an agent's work against the request behind it, not only against its final reply.
 - See the test that failed before the fix, and the approach the agent tried and dropped.
 - Hand unfinished work to another agent, even a different one, that reads the session first.
-- Find the session behind a change weeks later, from the terminal or from any agent.
+- Review a teammate's pull request with the session behind each commit, in
+  [team mode](../../guides/share-with-your-team/).
+- Find the session behind a change weeks later, [starting from its commit](../../guides/read-a-commit/),
+  from the terminal or from any agent.
 
 A diff shows what changed. The session shows why, and it's gone once the terminal closes
 unless something records it.
 
 ## How it works
 
-![How Wisdom works: Claude Code and Codex send events through hooks, and Pi through an extension, to a local daemon on 127.0.0.1 that never blocks the agent. It saves them in the project's .wisdom folder: SQLite, diffs and transcript copies. The dashboard, the CLI (glance, open) and the agent skill read it.](../../../assets/how-it-works.svg)
+![How Wisdom works: Claude Code and Codex send events through hooks, and Pi through an extension, to a local daemon on 127.0.0.1 that never blocks the agent. It saves them in the project's .wisdom folder: SQLite, diffs and transcript copies. At each commit, Wisdom keeps a record in your repository's .git that links each change to the step that made it. The dashboard, the CLI (glance, open, glance --commit) and the agent skill read it. In team mode, which is opt-in, git push sends records and sessions to your own git remote for teammates and CI.](../../../assets/how-it-works.svg)
 
 1. Your agent's own hooks send each event (a prompt, a tool call, its result) to a small
    background service on `127.0.0.1`.
@@ -47,6 +50,9 @@ unless something records it.
    of the agent's transcript and a diff of every file change it observed.
 3. You read it in the dashboard or the terminal. Your agents read it through a skill Wisdom
    gives them.
+4. When you commit, Wisdom keeps a record in your repository's `.git` that links each change
+   to the step that made it. In [team mode](../../guides/share-with-your-team/), your
+   `git push` shares those records and their sessions with your team.
 
 More detail in [How it works](../../concepts/how-it-works/).
 
@@ -73,8 +79,9 @@ the hook writes the event to disk and the agent carries on. Wisdom never blocks 
 <summary>Does it send my code or prompts anywhere?</summary>
 
 No. Everything stays in the project's `.wisdom/` folder. A recording leaves your machine only
-when you run [`wisdom share` or `wisdom export`](../../guides/share-a-session/), and both check
-for secrets first.
+when you run [`wisdom share` or `wisdom export`](../../guides/share-a-session/), or push in
+[team mode](../../guides/share-with-your-team/), which you turn on per repository. All of
+them check for secrets first. See [Privacy](../../concepts/privacy/).
 </details>
 
 <details>
@@ -82,6 +89,10 @@ for secrets first.
 
 Recording uses no model and costs nothing. Nothing is summarized. When one of your agents reads
 a session, that reading counts toward your agent's own usage, like any other command output.
+
+The one place a model writes anything is a [commit guide](../../guides/read-a-commit/#guides),
+and only when you ask for one or turn on team mode. By default it runs through your own Claude
+Code.
 </details>
 
 <details>

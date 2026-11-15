@@ -1,0 +1,185 @@
+---
+title: Share with your team
+description: Let teammates read the sessions behind each other's commits, through the git remote you already push to.
+sidebar:
+  order: 7
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components';
+
+<Aside title="New in 0.6.0, in beta">
+Install it with `npm install -g @oqura/wisdom@beta`. Until 0.6.0 is the default,
+`npm install -g @oqura/wisdom` gives you 0.5.1, which doesn't have these commands.
+</Aside>
+
+[Share a session](../share-a-session/) sends one file by hand. Team mode does it with every
+push: each commit's [record and guide](../read-a-commit/), and the sessions behind it, go to
+your own git remote as hidden refs. A teammate fetches them and reads your commit the way you
+do. Nothing goes to Wisdom.
+
+It's opt-in. A repository is in team mode while it has a committed `wisdom-team.json`;
+without one, Wisdom changes no commit message and pushes nothing.
+
+![Maya works with Claude Code, Sam with Codex and Lee with Pi. Each pushes to the same git remote, origin, as usual. Beside the branches, under refs/wisdom/ and the repository's ID, it keeps a record for each commit and every teammate's sessions. Anyone on the team runs wisdom team fetch and reads any commit with wisdom glance --commit, and CI checks every pull request with wisdom check.](../../../assets/team-one-repo.svg)
+
+## Set it up
+
+<Steps>
+
+1. ### Turn it on
+
+   One person adds the file and pushes it:
+
+   ```sh title="Terminal"
+   wisdom team init
+   git add wisdom-team.json
+   git commit -m "Turn on Wisdom team mode"
+   git push
+   ```
+
+2. ### Connect each clone
+
+   Everyone, you included, pulls the file and runs `connect` again:
+
+   ```sh title="Terminal"
+   git pull
+   wisdom connect
+   ```
+
+   Now that the file is there, this also installs three git hooks:
+
+   ```txt title="Output" wrap
+   Team mode: Wisdom's git hooks are in /home/maya/invoice-api/.git/hooks. Turn them off with: wisdom team hooks off
+   ```
+
+3. ### Commit and push as usual
+
+   ```sh title="Terminal"
+   git push
+   ```
+
+   ```txt title="Output" wrap
+   Wisdom: 1 commit record and 1 session version(s) sent to origin.
+   ```
+
+4. ### Read a teammate's commit
+
+   ```sh title="Terminal"
+   git pull
+   wisdom team fetch
+   wisdom glance --commit a4c91e2
+   ```
+
+   ```txt title="Output" wrap
+   1 teammate session updated, 0 removed by the team's deletion list, 3 commit records here.
+   ```
+
+   Their sessions are read-only copies here. Open the steps a commit names with
+   `wisdom open t2/c1 --capture <session>`, as with your own.
+
+</Steps>
+
+## What happens on each commit
+
+- **The commit.** Wisdom adds one line to the message, `Wisdom-Record: r-…`. It follows the
+  commit through an amend, a rebase and a squash merge, so the record can be found again.
+- **After it.** A background job keeps the commit's record. If the commit has agent work, a
+  model writes its guide: Claude Haiku 5.5 through your own Claude Code, about $0.001 to $0.008
+  a guide in Wisdom's tests. The commit doesn't wait for it.
+- **The push.** Your `git push` waits for any guide still being written, up to five minutes,
+  then sends the sessions and then the records. If any of this fails, Wisdom says so and your
+  push goes ahead.
+
+Only commits made in team mode travel. Work you recorded before `wisdom-team.json` was
+committed stays on your machine.
+
+To send without a `git push`, run `wisdom team push`.
+
+## What a push sends
+
+| Sent | Never sent |
+| --- | --- |
+| The sessions a pushed commit's record names | Sessions no pushed commit names |
+| Each commit's record and guide | Your `.wisdom/` folder |
+| Your git name and email, labelled "git config", since git doesn't verify them. Set `identity` to `false` to leave them out. | Any login |
+
+Each session goes through the same export as `wisdom share`, and every possible secret is
+redacted automatically, since there's no one to ask during a push. The records are scanned the same way,
+since a guide can quote a request. Your own recording is never changed.
+
+<Aside type="caution">
+The check finds the shapes it knows and will miss others. Anyone who can read the repository
+can fetch what's pushed. To add your own scanner, set `check` in
+[`wisdom-team.json`](../../reference/files-and-config/#wisdom-teamjson).
+</Aside>
+
+## Turn off the model
+
+```sh title="Terminal"
+wisdom guide off
+```
+
+Your commits then get a plain guide that Wisdom writes from the record: each piece's step and
+what was asked in that turn. It costs nothing, but says nothing about why beyond those requests.
+`wisdom guide on` turns the model back on. It only changes your own clone.
+
+To use another writer for the whole team (Codex, an API key, a local model), set `guides` in
+[`wisdom-team.json`](../../reference/files-and-config/#wisdom-teamjson).
+
+## Check pull requests in CI
+
+`wisdom check` needs no recordings, only the repository. For GitHub Actions:
+
+```yaml title=".github/workflows/wisdom.yml"
+name: wisdom
+on: pull_request
+jobs:
+  guides:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 24 }
+      - run: npm install -g @oqura/wisdom@beta   # @beta until 0.6.0 is the default
+      - run: wisdom check --range origin/${{ github.base_ref }}..HEAD
+```
+
+It prints one line per commit and fails when a commit with agent work has no guide, has one
+that didn't pass Wisdom's check, or names a session that isn't on the remote. A commit made
+without Wisdom isn't counted against you.
+
+**Squash merges.** GitHub gives the squashed commit a new hash, so it has no record of its own.
+Its message keeps the `Wisdom-Record:` lines of the commits inside it, and `glance --commit`
+and the check read those records instead. Keep the lines when you edit a squash message, or set
+the default squash message to "Pull request title and commit details" (Settings > General >
+Pull Requests).
+
+## Remove a session
+
+```sh title="Terminal"
+wisdom team delete 3f9c2a71
+```
+
+This removes it from the remote and adds it to the team's deletion list, so no clone pushes
+it back. Teammates' copies go at their next `wisdom team fetch`. Your own recording is kept.
+
+To remove old sessions as a habit, set `retentionDays` in `wisdom-team.json` and run
+`wisdom team prune`. It keeps any session a pushed commit still names.
+
+<Aside type="caution">
+GitHub keeps a deleted session's data until its own cleanup, so someone who knows its hash can
+still fetch it. There's no command to delete a commit record, and one already fetched stays in
+that clone.
+</Aside>
+
+## Limits
+
+- Tested with GitHub, not yet GitLab.
+- A pull request from a fork can't send sessions: forks can't push hidden refs.
+- The default writer needs Claude Code installed and logged in. Without it, commits with agent
+  work get no guide and say why; `wisdom guide off` gives them the plain one.
+- A session is pushed whole, about 100 KB for a typical one. Keep one session per task, so
+  unrelated work doesn't travel with it.
+
+To leave team mode, remove `wisdom-team.json` and run `wisdom team hooks off` in each clone.

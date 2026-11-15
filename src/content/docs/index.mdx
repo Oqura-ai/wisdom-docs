@@ -28,8 +28,8 @@ wisdom connect
 claude          # or codex, or pi: use it as usual
 ```
 
-Then read what happened: the session at a glance, then any turn in full. Below is an example
-session, written to show the format.
+Then read what happened: the session at a glance, then any turn in full, or start from the
+commit it made. Below is an example session, written to show the format.
 
 <Tabs syncKey="read">
 	<TabItem label="glance">
@@ -103,6 +103,46 @@ session, written to show the format.
 ```
 
 	</TabItem>
+	<TabItem label="glance --commit">
+
+```txt frame="terminal" title="~/invoice-api" wrap
+❯ wisdom glance --commit a4c91e2
+commit a4c91e2b7f30 · fix: round invoice totals once · committed 2026-11-11 09:40Z · version 412
+parent 7d2e9b1c04aa · 3 files · 3 pieces: 2 from recorded steps, 1 not recorded
+record kept when the commit was made, 2026-11-11 09:40Z
+the commit's own diff: git show a4c91e2b7f30
+
+README.md · modify · +1 −0 · not recorded
+src/totals.ts · modify · +2 −1
+    @@ -9,1 +9,2 @@  t2/c1, t2/c4 in session 3f9c2a71
+test/totals.test.ts · create · +14 −0
+    @@ -0,0 +1,14 @@  t2/c2 in session 3f9c2a71
+
+sessions
+    3f9c2a71-8d4e-4b1a-9c55-2e7f0b6d1a90  claude-code  t2/c1, t2/c2, t2/c4 · window t1–t3
+    window: from the start of these sessions (no earlier commit of yours on this branch), up to this commit
+
+To read a step, open its position in its session, such as {"capture":"3f9c2a71","open":"t2/c1"}.
+
+guide · plain, built from the record now, no model · derived, not evidence · not stored; a model guide on request: wisdom guide a4c91e2b7f30
+    ## Summary
+    fix: round invoice totals once. Written by Wisdom from the commit's record, without a model: which recorded step made each piece and what was asked in that turn. It does not say why beyond those requests.
+
+    ## Items
+    - README.md (modify) · not recorded
+      No recording explains this change.
+    - src/totals.ts @@ -9,1 +9,2 @@ · t2/c1, t2/c4 in session 3f9c2a71
+      Made by [t2/c1 3f9c2a71] (claude-code). Asked in t2: "fix it and add a test". Made by [t2/c4 3f9c2a71] (claude-code).
+    - test/totals.test.ts @@ -0,0 +1,14 @@ · t2/c2 in session 3f9c2a71
+      Made by [t2/c2 3f9c2a71] (claude-code). Asked in t2: "fix it and add a test".
+
+complete · 28 lines
+```
+
+Each part of the commit points to the step that wrote it. New in 0.6.0: see
+[Read a commit](/wisdom-docs/guides/read-a-commit/).
+
+	</TabItem>
 </Tabs>
 
 ## What you get
@@ -111,6 +151,8 @@ session, written to show the format.
   and gaps in the recording are marked where they occur.
 - One way to read Claude Code, Codex and Pi sessions: for you in the terminal or the dashboard,
   for your agents through a skill.
+- From any commit back to the steps that made it, with
+  `wisdom glance --commit` ([new in 0.6.0](/wisdom-docs/guides/read-a-commit/)).
 - Hooks that never block your agent. If the background service is down, events wait on disk.
 - Everything stays in the project's `.wisdom/` folder until you choose to share it.
 
